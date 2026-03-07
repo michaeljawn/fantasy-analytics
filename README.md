@@ -29,6 +29,11 @@ This project simulates a **fantasy football analytics engine**:
 
 ---
 
+## Entity Relationship Diagram
+![ERD Diagram](diagrams/erd_diagram.png)
+
+---
+
 ## Technologies & Skills Demonstrated
 
 - **Database Design:** Relational schema with primary and foreign keys, indexes, and constraints.
