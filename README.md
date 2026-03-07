@@ -32,7 +32,7 @@ This project simulates a **fantasy football analytics engine**:
 ## Technologies & Skills Demonstrated
 
 - Database Design: Relational schema with primary and foreign keys, indexes, and constraints.
-- SQL: Aggregations (**AVG** , **STDDEV**), window functions (**RANK** , **PARTITION BY**), joins, insert statements, and select statements.
+- SQL: Aggregations (`AVG` , `STDDEV`), window functions (`RANK` , `PARTITION BY`), joins, insert statements, and select statements.
 - Analytics: Fantasy points calculation, weekly rankings, positional leaderboards, and player consistency.
 - Tools: PostgreSQL, pgAdmin
 - Project Workflow: Data ingestion -> Scoring -> Analytics -> Insights
@@ -42,7 +42,7 @@ This project simulates a **fantasy football analytics engine**:
 ## Next Steps
 
 - Add more players and weeks to simulate an entire NFL season.
-- Create breakout player detection using **LAG()** and **DENSE_RANK()**.
+- Create breakout player detection using `LAG()` and `DENSE_RANK()`.
 - Build visualizations in Python using database outputs.
 - Add dynamic queries to compare PPR vs standard scoring.
 
@@ -51,7 +51,7 @@ This project simulates a **fantasy football analytics engine**:
 ## Usage
 
 1. Clone the repository.
-2. Run **schema.sql** to create tables.
-3. Run **seed_data.sql** to populate sample data.
-4. Run **fantasy_scoring.sql** to calculate fantasy points.
-5. Run **analytics_queries.sql** to generate rankings and insights.
+2. Run `schema.sql` to create tables.
+3. Run `seed_data.sql` to populate sample data.
+4. Run `fantasy_scoring.sql` to calculate fantasy points.
+5. Run `analytics_queries.sql` to generate rankings and insights.
