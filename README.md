@@ -1,6 +1,6 @@
 # Fantasy Football Analytics
 
-**Personal Project | PostgreSQL, SQL**
+**Personal Project | PostgreSQL, SQL, Data Analytics**
 
 Analyze and rank NFL offensive players based on fantasy performance. This project demonstrates end-to-end database design, data ingestion, scoring logic, and analytics queries.
 
