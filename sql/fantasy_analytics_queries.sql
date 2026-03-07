@@ -51,3 +51,22 @@ SELECT p.position, p.first_name, p.last_name, ROUND(AVG(f.ppr_points),2) AS avg_
 
 	GROUP BY p.player_id
 	ORDER BY position, avg_points DESC;
+
+-- Breakout Detection
+SELECT p.first_name, p.last_name, p.position, f.week, f.ppr_points,
+
+	LAG(f.ppr_points) OVER(
+		PARTITION BY f.player_id
+		ORDER BY f.week
+	) AS previous_week_points,
+
+	ROUND(f.ppr_points - LAG(f.ppr_points) OVER(
+		PARTITION BY f.player_id
+		ORDER BY f.week
+		), 2
+	) AS point_increase
+
+	FROM fantasy_points f
+	JOIN players p ON p.player_id = f.player_id
+
+	ORDER BY point_increase DESC NULLS LAST;
