@@ -31,11 +31,11 @@ This project simulates a **fantasy football analytics engine**:
 
 ## Technologies & Skills Demonstrated
 
-- Database Design: Relational schema with primary and foreign keys, indexes, and constraints.
-- SQL: Aggregations (`AVG` , `STDDEV`), window functions (`RANK` , `PARTITION BY`), joins, insert statements, and select statements.
-- Analytics: Fantasy points calculation, weekly rankings, positional leaderboards, and player consistency.
-- Tools: PostgreSQL, pgAdmin
-- Project Workflow: Data ingestion -> Scoring -> Analytics -> Insights
+- **Database Design:** Relational schema with primary and foreign keys, indexes, and constraints.
+- **SQL:** Aggregations (`AVG` , `STDDEV`), window functions (`RANK` , `PARTITION BY`), joins, insert statements, and select statements.
+- **Analytics:** Fantasy points calculation, weekly rankings, positional leaderboards, and player consistency.
+- **Tools:** PostgreSQL, pgAdmin
+- **Project Workflow:** Data ingestion -> Scoring -> Analytics -> Insights
 
 ---
 
