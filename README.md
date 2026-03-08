@@ -64,4 +64,3 @@ This project simulates a **fantasy football analytics engine**:
 
 Created by Michael John.  
 Feel free to connect with me on [LinkedIn](https://www.linkedin.com/in/michael-john-06a098359/).
-<><
