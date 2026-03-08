@@ -60,6 +60,8 @@ This project simulates a **fantasy football analytics engine**:
 4. Run `fantasy_scoring.sql` to calculate fantasy points.
 5. Run `analytics_queries.sql` to generate rankings and insights.
 
+---
+
 ## Contact
 
 Created by Michael John.  
