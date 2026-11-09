@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS players(
 	age            INT,
 	years_exp      INT,
 	injury_status  VARCHAR(20),
+	birth_date     DATE,                       -- for age in any season (aging curves)
 	active         BOOLEAN NOT NULL DEFAULT TRUE,
 	updated_at     TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -46,8 +47,8 @@ CREATE TABLE IF NOT EXISTS weekly_stats(
 	two_pt         INT NOT NULL DEFAULT 0,
 	fumbles_lost   INT NOT NULL DEFAULT 0,
 
-	off_snaps      INT NOT NULL DEFAULT 0,
-	team_off_snaps INT NOT NULL DEFAULT 0,
+	off_snaps      INT,                        -- NULL = not recorded (Sleeper has snaps from 2020)
+	team_off_snaps INT,
 
 	PRIMARY KEY (player_id, season, week)
 );

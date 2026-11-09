@@ -1,0 +1,48 @@
+# Saves Sleeper's projections before kickoff so the ML model trains on numbers as they stood pre-game.
+# Snapshots live on the `projection-snapshots` branch to keep `main` small. See issue #20.
+name: Projection snapshots
+
+on:
+  schedule:
+    # Every morning before the day's first kickoff (8am ET in winter, 9am ET in fall), including London games
+    - cron: "0 13 * * *"
+    # Monday and Thursday afternoons, for late injury news before the night games (5:30pm ET in winter)
+    - cron: "30 22 * * 1,4"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: projection-snapshots
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          ref: projection-snapshots
+          path: data
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Snapshot projections
+        id: snapshot
+        run: node scripts/snapshot-projections.mts data
+
+      - name: Commit new snapshots
+        if: steps.snapshot.outputs.changed != ''
+        working-directory: data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Projection snapshot: ${{ steps.snapshot.outputs.changed }}"
+          git push

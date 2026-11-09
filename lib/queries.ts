@@ -59,7 +59,11 @@ export type SeasonRow = {
 
 export async function getSeasonRankings(season: number, format: Format, position: Position | "ALL") {
   return query<SeasonRow>(
-    `SELECT s.*, p.first_name || ' ' || p.last_name AS name, p.team, p.injury_status
+    `SELECT s.*, p.first_name || ' ' || p.last_name AS name, p.injury_status,
+			-- The team he played for that season (his last game of it), not his current team
+			(SELECT w.team FROM weekly_stats w
+				WHERE w.player_id = s.player_id AND w.season = s.season
+				ORDER BY w.week DESC LIMIT 1) AS team
 		FROM v_season_summary s
 		JOIN players p ON p.player_id = s.player_id
 		WHERE s.season = $1 AND s.format = $2 AND ($3 = 'ALL' OR s.position = $3)
