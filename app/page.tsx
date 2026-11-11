@@ -49,7 +49,7 @@ function Hero({ data }: { data: LandingData | null }) {
           </h1>
           <p className="rise mt-5 max-w-xl text-base text-ink-2 sm:text-lg" style={{ "--i": 2 } as React.CSSProperties}>
             Trending players, trade values that blend the real trade market with a production model, start/sit calls, and
-            matchup heatmaps, built on four seasons of weekly NFL stats.
+            matchup heatmaps, built on {data?.counts.seasons ? `${data.counts.seasons} seasons` : "years"} of weekly NFL stats.
           </p>
           <div className="rise mt-8 flex flex-wrap gap-3" style={{ "--i": 3 } as React.CSSProperties}>
             <Link
@@ -239,7 +239,7 @@ const FEATURES = [
   {
     href: "/rankings",
     title: "Rankings & tiers",
-    body: "Rest-of-season projections with natural tier breaks, VOR, boom/bust rates, and four seasons of history.",
+    body: "Rest-of-season projections with natural tier breaks, VOR, boom/bust rates, and season stats back to 2014.",
     icon: "M4 20V10M10 20V4M16 20v-7M22 20H2",
   },
   {

@@ -13,7 +13,7 @@ A fantasy football analytics dashboard built on a PostgreSQL analytics layer. It
 | **Home** | Animated landing page built on live data: the hottest player right now, a ribbon of today’s most-added players, a buy-low / sell-high spotlight, and a live dynasty trade |
 | **Overview** | Waiver buzz, players heating up, last week's top scorers, softest defenses by position |
 | **Trending** | Most added/dropped players across Sleeper leagues (24h / 3d / 7d), form risers and fallers (last 3 games vs. season), snap share risers, and buy-low / sell-high players where the market and our model disagree |
-| **Rankings** | Rest-of-season outlook with tiers, VOR, and trade value, or full season stats (2023–present) with floor, ceiling, boom/bust rates, and snap share |
+| **Rankings** | Rest-of-season outlook with tiers, VOR, and trade value, or full season stats (2014–present) with floor, ceiling, boom/bust rates, and snap share |
 | **Player profiles** | Weekly points chart with upcoming projections, game log, season-by-season history, and next matchup rating |
 | **Start/Sit** | Compare up to 6 players for the upcoming week using projection, recent form, and opponent strength vs. the position |
 | **Trade calculator** | Redraft or Dynasty mode. Value both sides of a trade with league size and Superflex settings, a package discount for multi-player deals, and suggestions to balance uneven trades. Dynasty mode adds rookie picks (Early / Mid / Late, rounds 1–4, next three drafts). |
@@ -61,16 +61,26 @@ Sleeper API ──► scripts/ingest.ts ──► PostgreSQL (tables + analytics
 
 ## Getting started
 
-Requires **Node 20+** and **Docker**.
+Requires **Node 24+** and **Docker**.
 
 ```bash
 npm install
 npm run db:up          # Postgres 16 on localhost:5433 (schema + views load automatically)
-npm run ingest:all     # backfill 2023–2026 from Sleeper (a few minutes)
+npm run ingest:all     # backfill 2014–present from Sleeper (about 10 minutes)
 npm run dev            # http://localhost:3000
 ```
 
 During the season, run `npm run ingest` to refresh the current season and upcoming projections. You can also target specific weeks: `npm run ingest -- --seasons 2026 --weeks 7`.
+
+**Existing database?** Run `npm run db:migrate` after pulling schema changes. Every file in `db/` is safe to re-run.
+
+### Historical data
+
+Weekly stats go back to **2014**, the first season where Sleeper covers every player (2009–2013 only includes some, which would bias the history toward players with long careers). Field coverage varies: targets and air yards exist for every season, **snap counts start in 2020** (stored as `NULL`, not zero, before that), and relocated franchises use their current codes (OAK→LV, SD→LAC, STL→LAR) so defense history lines up.
+
+### Projection snapshots
+
+Sleeper edits its historical projections after games, so they can't be trusted as pre-game data for model training. The **Projection snapshots** workflow (`.github/workflows/projection-snapshots.yml`) saves projections every morning, plus Monday and Thursday afternoons, to the `projection-snapshots` branch. Run one locally with `npm run snapshot`.
 
 ---
 

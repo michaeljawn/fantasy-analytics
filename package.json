@@ -10,7 +10,9 @@
     "db:up": "docker compose up -d",
     "db:reset": "docker compose down -v && docker compose up -d",
     "ingest": "tsx --env-file-if-exists=.env.local scripts/ingest.ts",
-    "ingest:all": "tsx --env-file-if-exists=.env.local scripts/ingest.ts --seasons 2023-2026"
+    "ingest:all": "tsx --env-file-if-exists=.env.local scripts/ingest.ts --seasons 2014-2026",
+    "db:migrate": "node scripts/migrate.mjs",
+    "snapshot": "node scripts/snapshot-projections.mts"
   },
   "dependencies": {
     "next": "^15.5.0",
