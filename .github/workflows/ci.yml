@@ -1,0 +1,63 @@
+# Typechecks, builds, and loads the SQL schema into a real Postgres on every PR.
+# The "check" job is a required status check on `main`. See issue #3.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: fantasy
+          POSTGRES_PASSWORD: fantasy
+          POSTGRES_DB: fantasy
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U fantasy"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgres://fantasy:fantasy@localhost:5432/fantasy
+      NEXT_TELEMETRY_DISABLED: 1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run lint
+
+      # Every file in db/ must apply cleanly in order, twice (they're meant to be safe to re-run)
+      - name: Load SQL schema and views
+        env:
+          PGPASSWORD: fantasy
+        run: |
+          for pass in 1 2; do
+            for f in db/*.sql; do
+              psql -h localhost -U fantasy -d fantasy -v ON_ERROR_STOP=1 -q -f "$f"
+            done
+          done
+
+      - name: Build
+        run: npm run build
