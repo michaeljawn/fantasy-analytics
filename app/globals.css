@@ -288,3 +288,85 @@ body {
     transform: none;
   }
 }
+
+/* ──────────────────────────────────────────────
+   League newspaper (newsprint, light and dark)
+   ────────────────────────────────────────────── */
+
+:root {
+  --paper: #f5f0e6;
+  --paper-ink: #1c1a16;
+  --paper-ink-2: #4a453c;
+  --paper-faint: #857d6f;
+  --paper-rule: #2a2620;
+  --paper-hair: rgba(28, 26, 22, 0.18);
+  --paper-accent: #a3311f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1b1a17;
+    --paper-ink: #ebe5d8;
+    --paper-ink-2: #bdb6a7;
+    --paper-faint: #8c8577;
+    --paper-rule: #d9d2c3;
+    --paper-hair: rgba(235, 229, 216, 0.16);
+    --paper-accent: #e07a5f;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #1b1a17;
+  --paper-ink: #ebe5d8;
+  --paper-ink-2: #bdb6a7;
+  --paper-faint: #8c8577;
+  --paper-rule: #d9d2c3;
+  --paper-hair: rgba(235, 229, 216, 0.16);
+  --paper-accent: #e07a5f;
+}
+
+.paper {
+  background: var(--paper);
+  color: var(--paper-ink);
+  font-family: var(--font-paper-body), Georgia, "Times New Roman", serif;
+}
+.paper .headline {
+  font-family: var(--font-paper-head), Georgia, serif;
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+.paper .masthead {
+  font-family: var(--font-paper-mast), "Old English Text MT", serif;
+  font-weight: 400;
+  line-height: 1;
+}
+.paper .kicker {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.paper .rule-double {
+  border-top: 3px double var(--paper-rule);
+}
+.paper .rule {
+  border-top: 1px solid var(--paper-rule);
+}
+.paper .hair {
+  border-color: var(--paper-hair);
+}
+/* Drop cap on the lead story's first paragraph */
+.paper .dropcap::first-letter {
+  float: left;
+  font-family: var(--font-paper-head), Georgia, serif;
+  font-weight: 800;
+  font-size: 3.4em;
+  line-height: 0.85;
+  padding: 0.05em 0.08em 0 0;
+}
+/* Newsprint photos */
+.paper .halftone img {
+  filter: grayscale(1) contrast(1.1);
+}

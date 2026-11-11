@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SetupNotice } from "@/components/SetupNotice";
 import { TeamAvatar } from "@/components/TeamAvatar";
 import { TeamPicker } from "@/components/TeamPicker";
@@ -64,7 +65,15 @@ export default async function LeaguePage({ searchParams }: { searchParams: Promi
             <h1 className="truncate text-xl font-semibold tracking-tight">{league.name}</h1>
           </div>
         </div>
-        <TeamPicker teams={teams} value={myTeam?.owner_id ?? null} />
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/league/news"
+            className="rounded-md border border-line bg-surface px-3 py-1.5 text-sm font-medium hover:border-accent hover:text-accent"
+          >
+            Read the league paper →
+          </Link>
+          <TeamPicker teams={teams} value={myTeam?.owner_id ?? null} />
+        </div>
       </div>
 
       <ul className="-mt-3 mb-6 flex flex-wrap gap-1.5">

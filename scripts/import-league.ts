@@ -112,7 +112,7 @@ async function importLeague(leagueId: string): Promise<SleeperLeague> {
     "league_users",
     ["league_id", "user_id", "display_name", "team_name", "avatar_url", "is_owner"],
     ["league_id", "user_id"],
-    users.map((u) => [id, u.user_id, u.display_name, u.metadata?.team_name || null, avatarUrl(u), u.is_owner ?? false]),
+    users.map((u) => [id, u.user_id, u.display_name.trim(), u.metadata?.team_name?.trim() || null, avatarUrl(u), u.is_owner ?? false]),
   );
 
   await upsert(
