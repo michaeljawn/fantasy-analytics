@@ -1,13 +1,60 @@
 import { cookies } from "next/headers";
 import { query } from "./db";
 
-// The league the site is built around: LEAGUE_ID, or else the most recent season imported
-export async function getLeagueId(): Promise<string | null> {
+// ──────────────────────────────────────────────
+// Which league (cookies)
+// ──────────────────────────────────────────────
+
+// Each browser keeps its own list of leagues and which one is showing. Everyone in a league
+// still sees the same data and the same paper; the cookies only pick which league to show.
+export const LEAGUES_COOKIE = "leagues"; // comma-separated league IDs
+export const ACTIVE_LEAGUE_COOKIE = "league";
+export const COOKIE_OPTIONS = { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" } as const;
+
+// The site's home league for visitors who haven't added their own: LEAGUE_ID, or else the
+// first league imported (in its latest season), so adding more leagues never changes it
+export async function getDefaultLeagueId(): Promise<string | null> {
   if (process.env.LEAGUE_ID) return process.env.LEAGUE_ID;
   const rows = await query<{ league_id: string }>(
-    `SELECT league_id FROM leagues ORDER BY season DESC, updated_at DESC LIMIT 1`,
+    `SELECT l.league_id FROM leagues l
+		WHERE NOT EXISTS (SELECT 1 FROM leagues n WHERE n.previous_league_id = l.league_id)
+		ORDER BY l.created_at, l.season DESC, l.league_id LIMIT 1`,
   );
   return rows[0]?.league_id ?? null;
+}
+
+// League IDs this browser follows, in the order they were added
+export async function getMyLeagueIds(): Promise<string[]> {
+  const saved = (await cookies()).get(LEAGUES_COOKIE)?.value;
+  if (saved != null) return saved.split(",").filter(Boolean);
+  const fallback = await getDefaultLeagueId();
+  return fallback ? [fallback] : [];
+}
+
+// The league to show: the one this browser picked, if it's still imported
+export async function getLeagueId(): Promise<string | null> {
+  const active = (await cookies()).get(ACTIVE_LEAGUE_COOKIE)?.value;
+  const candidates = [active, ...(await getMyLeagueIds())].filter((id): id is string => !!id);
+  if (candidates.length) {
+    const rows = await query<{ league_id: string }>(`SELECT league_id FROM leagues WHERE league_id = ANY($1)`, [candidates]);
+    const imported = new Set(rows.map((r) => r.league_id));
+    const pick = candidates.find((id) => imported.has(id));
+    if (pick) return pick;
+  }
+  return getDefaultLeagueId();
+}
+
+export type LeagueSummary = { league_id: string; name: string; season: number; avatar: string | null; total_rosters: number };
+
+export async function getMyLeagues(): Promise<LeagueSummary[]> {
+  const ids = await getMyLeagueIds();
+  if (ids.length === 0) return [];
+  const rows = await query<LeagueSummary>(
+    `SELECT league_id, name, season, avatar, total_rosters FROM leagues WHERE league_id = ANY($1)`,
+    [ids],
+  );
+  const byId = new Map(rows.map((r) => [r.league_id, r]));
+  return ids.flatMap((id) => byId.get(id) ?? []);
 }
 
 // ──────────────────────────────────────────────

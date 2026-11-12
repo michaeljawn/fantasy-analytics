@@ -17,8 +17,12 @@ CREATE TABLE IF NOT EXISTS leagues(
 	roster_positions   TEXT[] NOT NULL,            -- starting slots then BN, e.g. {QB,RB,RB,...,SUPER_FLEX,BN}
 	scoring_settings   JSONB NOT NULL,             -- Sleeper's scoring rules, e.g. {"rec": 1, "pass_td": 6}
 	settings           JSONB NOT NULL,             -- type (2 = dynasty), playoff_week_start, last_scored_leg, ...
+	created_at         TIMESTAMPTZ NOT NULL DEFAULT now(),  -- first import; the oldest is the site's default league
 	updated_at         TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Added after the table first shipped
+ALTER TABLE leagues ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT now();
 
 CREATE TABLE IF NOT EXISTS league_users(
 	league_id     TEXT NOT NULL REFERENCES leagues(league_id) ON DELETE CASCADE,

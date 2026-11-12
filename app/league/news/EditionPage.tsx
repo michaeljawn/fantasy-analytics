@@ -32,9 +32,8 @@ function NoEditions() {
     <div className="mx-auto max-w-xl rounded-lg border border-line bg-surface p-6">
       <h1 className="text-base font-semibold">No editions published yet</h1>
       <p className="mt-2 text-sm text-ink-2">
-        The league paper is published after each week&apos;s games are final. Import the latest scores, then publish:
+        The league paper comes out after each week&apos;s games are final, so the first edition arrives after week 1.
       </p>
-      <pre className="mt-3 overflow-x-auto rounded-md bg-surface-2 p-3 text-xs">{`npm run league\nnpm run paper`}</pre>
     </div>
   );
 }
