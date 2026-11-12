@@ -12,6 +12,7 @@
     "ingest": "tsx --env-file-if-exists=.env.local scripts/ingest.ts",
     "ingest:all": "tsx --env-file-if-exists=.env.local scripts/ingest.ts --seasons 2014-2026",
     "league": "tsx --env-file-if-exists=.env.local scripts/import-league.ts",
+    "paper": "tsx --env-file-if-exists=.env.local scripts/generate-edition.ts",
     "db:migrate": "node scripts/migrate.mjs",
     "snapshot": "node scripts/snapshot-projections.mts"
   },

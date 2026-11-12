@@ -288,3 +288,61 @@ body {
     transform: none;
   }
 }
+
+/* ──────────────────────────────────────────────
+   League newspaper (black ink on white, in both themes)
+   ────────────────────────────────────────────── */
+
+:root {
+  --paper: #ffffff;
+  --paper-ink: #111111;
+  --paper-ink-2: #444444;
+  --paper-faint: #777777;
+  --paper-rule: #111111;
+  --paper-hair: rgba(17, 17, 17, 0.18);
+  --paper-accent: #a3311f;
+  --paper-up: #1e7b34;
+  --paper-photo: #e8e8e8;
+}
+
+.paper {
+  background: var(--paper);
+  color: var(--paper-ink);
+  font-family: var(--font-paper-body), Georgia, "Times New Roman", serif;
+}
+.paper .headline {
+  font-family: var(--font-paper-head), Georgia, serif;
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+.paper .masthead {
+  font-family: var(--font-paper-mast), "Old English Text MT", serif;
+  font-weight: 400;
+  line-height: 1;
+}
+.paper .kicker {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.paper .rule-double {
+  border-top: 3px double var(--paper-rule);
+}
+.paper .rule {
+  border-top: 1px solid var(--paper-rule);
+}
+.paper .hair {
+  border-color: var(--paper-hair);
+}
+/* Drop cap on the lead story's first paragraph */
+.paper .dropcap::first-letter {
+  float: left;
+  font-family: var(--font-paper-head), Georgia, serif;
+  font-weight: 800;
+  font-size: 3.4em;
+  line-height: 0.85;
+  padding: 0.05em 0.08em 0 0;
+}
