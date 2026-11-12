@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PlayerAvatar } from "@/components/PlayerAvatar";
+import { hasProfile } from "@/components/ui";
 import { TeamAvatar } from "@/components/TeamAvatar";
 import type { Edition as EditionData, PlayerLine, Preview, Result, StandingRow, Story, TeamRef } from "@/lib/newspaper/types";
 import { bodyFont, headFont, mastFont } from "./fonts";
@@ -294,9 +295,13 @@ function PlayerList({
                 background="bg-[var(--paper-photo)] text-[var(--paper-ink-2)]"
               />
               <span className="min-w-0 flex-1 leading-tight">
-                <Link href={`/players/${p.player_id}`} className="block truncate font-semibold hover:underline">
-                  {p.name}
-                </Link>
+                {hasProfile(p.position) ? (
+                  <Link href={`/players/${p.player_id}`} className="block truncate font-semibold hover:underline">
+                    {p.name}
+                  </Link>
+                ) : (
+                  <span className="block truncate font-semibold">{p.name}</span>
+                )}
                 <span className="block truncate text-xs text-[var(--paper-ink-2)]">
                   {p.position} · {p.team.name}
                 </span>

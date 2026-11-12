@@ -1,5 +1,7 @@
 import { query } from "./db";
-import { projectionColumn, type Format, type Position } from "./formats";
+// Kickers and defenses are in `players` for league rosters only. Queries that read `players`
+// without joining stats keep to the offensive positions the stats cover (K/DEF support is #17).
+import { POSITIONS, projectionColumn, type Format, type Position } from "./formats";
 import { getNflState } from "./sleeper";
 
 // ──────────────────────────────────────────────
@@ -110,8 +112,8 @@ export type GameLogRow = {
 export async function getPlayer(playerId: string) {
   const rows = await query<PlayerInfo>(
     `SELECT player_id, first_name, last_name, position, team, age, years_exp, injury_status
-		FROM players WHERE player_id = $1`,
-    [playerId],
+		FROM players WHERE player_id = $1 AND position = ANY($2)`,
+    [playerId, POSITIONS],
   );
   return rows[0] ?? null;
 }
@@ -285,10 +287,11 @@ export async function searchPlayers(term: string, limit = 8) {
     `SELECT p.player_id, p.first_name || ' ' || p.last_name AS name, p.position, p.team, p.injury_status
 		FROM players p
 		WHERE (p.first_name || ' ' || p.last_name) ILIKE '%' || $1 || '%'
+			AND p.position = ANY($3)
 		ORDER BY EXISTS (SELECT 1 FROM weekly_stats w WHERE w.player_id = p.player_id) DESC,
 			p.active DESC, p.last_name
 		LIMIT $2`,
-    [term, limit],
+    [term, limit, POSITIONS],
   );
 }
 
@@ -306,7 +309,7 @@ export async function getPlayerSummaries(ids: string[], season: number, format: 
 			s.games, s.avg_points, s.last3_avg, s.last3_snap_share
 		FROM players p
 		LEFT JOIN v_season_summary s ON s.player_id = p.player_id AND s.season = $2 AND s.format = $3
-		WHERE p.player_id = ANY($1)`,
-    [ids, season, format],
+		WHERE p.player_id = ANY($1) AND p.position = ANY($4)`,
+    [ids, season, format, POSITIONS],
   );
 }

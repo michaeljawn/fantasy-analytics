@@ -3,7 +3,10 @@
 import Image from "next/image";
 import { useState } from "react";
 
-// Sleeper headshot, falling back to initials when a player has no photo
+// Team defenses use the team code as their player ID (e.g. "KC")
+const isTeamDefense = (id: string) => /^[A-Z]{2,3}$/.test(id);
+
+// Sleeper headshot (or team logo for a defense), falling back to initials when there's no photo
 export function PlayerAvatar({
   id,
   name,
@@ -33,12 +36,16 @@ export function PlayerAvatar({
         <span className="font-semibold">{initials}</span>
       ) : (
         <Image
-          src={`https://sleepercdn.com/content/nfl/players/thumb/${id}.jpg`}
+          src={
+            isTeamDefense(id)
+              ? `https://sleepercdn.com/images/team_logos/nfl/${id.toLowerCase()}.png`
+              : `https://sleepercdn.com/content/nfl/players/thumb/${id}.jpg`
+          }
           alt=""
           width={size}
           height={size}
           sizes={`${size}px`}
-          className="h-full w-full object-cover object-top"
+          className={isTeamDefense(id) ? "h-full w-full object-contain p-[12%]" : "h-full w-full object-cover object-top"}
           onError={() => setFailed(true)}
         />
       )}

@@ -70,7 +70,18 @@ export function InjuryTag({ status }: { status: string | null }) {
   );
 }
 
-export function PlayerLink({ id, name }: { id: string; name: string }) {
+// Kickers and defenses have no stats yet (#17), so no profile page to link to
+export const hasProfile = (position: string | null | undefined) => position !== "K" && position !== "DEF";
+
+export function PlayerLink({ id, name, position }: { id: string; name: string; position?: string | null }) {
+  if (!hasProfile(position)) {
+    return (
+      <span className="inline-flex min-w-0 items-center gap-2 font-medium">
+        <PlayerAvatar id={id} name={name} />
+        <span className="truncate">{name}</span>
+      </span>
+    );
+  }
   return (
     <Link href={`/players/${id}`} className="group inline-flex min-w-0 items-center gap-2 font-medium">
       <PlayerAvatar id={id} name={name} />
