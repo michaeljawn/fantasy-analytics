@@ -93,6 +93,7 @@ export async function importLeague(leagueId: string, log: (msg: string) => void 
   if (!league?.league_id) throw new Error(`No Sleeper league with ID ${leagueId}`);
   if (league.sport !== "nfl") throw new Error(`${league.name} isn't an NFL league`);
   const id = league.league_id;
+  league.name = league.name.trim();
   log(`${league.name} (${league.season}, ${league.status})`);
 
   await upsert(

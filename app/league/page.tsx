@@ -1,21 +1,19 @@
 import Link from "next/link";
-import { LeagueSwitcher } from "@/components/leagues/LeagueSwitcher";
+import { LeagueHeader } from "@/components/leagues/LeagueHeader";
 import { SetupNotice } from "@/components/SetupNotice";
 import { TeamAvatar } from "@/components/TeamAvatar";
-import { TeamPicker } from "@/components/TeamPicker";
 import { Card, Empty, InjuryTag, PlayerLink, PosBadge, Segmented, fmt } from "@/components/ui";
 import {
   getLeague,
   getLeagueId,
-  getMyLeagues,
   getMyUserId,
   getRoster,
   getScheduleWeeks,
+  getSwitcherLeagues,
   getTeams,
   getWeekMatchups,
   slotLabel,
   streak,
-  type LeagueInfo,
   type Matchup,
   type RosterPlayer,
   type Team,
@@ -30,11 +28,11 @@ export default async function LeaguePage({ searchParams }: { searchParams: Promi
     const league = leagueId ? await getLeague(leagueId) : null;
     if (!leagueId || !league) return null;
 
-    const [teams, weeks, myUserId, myLeagues] = await Promise.all([
+    const [teams, weeks, myUserId, switcher] = await Promise.all([
       getTeams(leagueId),
       getScheduleWeeks(leagueId, league.playoffWeekStart),
       getMyUserId(),
-      getMyLeagues(),
+      getSwitcherLeagues(league),
     ]);
     const defaultWeek = league.lastScoredWeek > 0 ? league.lastScoredWeek : league.currentWeek;
     const week = weeks.includes(Number(params.week)) ? Number(params.week) : defaultWeek;
@@ -44,10 +42,6 @@ export default async function LeaguePage({ searchParams }: { searchParams: Promi
       getWeekMatchups(leagueId, week),
       myTeam ? getRoster(leagueId, myTeam.roster_id) : Promise.resolve(null),
     ]);
-    // The league showing may be the site's default rather than one this browser added
-    const switcher = myLeagues.some((l) => l.league_id === leagueId)
-      ? myLeagues
-      : [{ league_id: leagueId, name: league.name, season: league.season }, ...myLeagues];
     return { league, teams, weeks, week, matchups, myTeam, roster, switcher };
   });
 
@@ -58,39 +52,7 @@ export default async function LeaguePage({ searchParams }: { searchParams: Promi
 
   return (
     <>
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <div className="flex min-w-0 items-center gap-3">
-          <TeamAvatar
-            url={league.avatar ? `https://sleepercdn.com/avatars/thumbs/${league.avatar}` : null}
-            name={league.name}
-            size={44}
-          />
-          <div className="min-w-0">
-            <p className="text-sm text-ink-2">
-              {league.season} season · {weekStatus(league)}
-            </p>
-            <h1 className="truncate text-xl font-semibold tracking-tight">{league.name}</h1>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <LeagueSwitcher leagues={switcher} value={league.league_id} />
-          <Link
-            href="/league/news"
-            className="rounded-md border border-line bg-surface px-3 py-1.5 text-sm font-medium hover:border-accent hover:text-accent"
-          >
-            Read the league paper →
-          </Link>
-          <TeamPicker teams={teams} value={myTeam?.owner_id ?? null} />
-        </div>
-      </div>
-
-      <ul className="-mt-3 mb-6 flex flex-wrap gap-1.5">
-        {league.tags.map((t) => (
-          <li key={t} className="rounded border border-line px-2 py-0.5 text-xs text-ink-2">
-            {t}
-          </li>
-        ))}
-      </ul>
+      <LeagueHeader league={league} leagues={switcher} teams={teams} myUserId={myTeam?.owner_id ?? null} tab="standings" />
 
       {/* min-w-0 lets the wide standings table scroll inside its card instead of widening the page */}
       <div className="grid items-start gap-4 lg:grid-cols-3 [&>*]:min-w-0">
@@ -142,12 +104,6 @@ export default async function LeaguePage({ searchParams }: { searchParams: Promi
       </div>
     </>
   );
-}
-
-function weekStatus(league: LeagueInfo) {
-  if (league.status === "complete") return "Final";
-  if (league.status !== "in_season") return "Preseason";
-  return league.currentWeek >= league.playoffWeekStart ? `Playoffs, week ${league.currentWeek}` : `Week ${league.currentWeek}`;
 }
 
 function record(t: Team) {
