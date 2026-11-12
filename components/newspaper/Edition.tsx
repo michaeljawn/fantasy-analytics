@@ -174,9 +174,7 @@ function SectionHead({ children }: { children: React.ReactNode }) {
 function Team({ team, size = 22 }: { team: TeamRef; size?: number }) {
   return (
     <span className="inline-flex min-w-0 items-center gap-2">
-      <span className="halftone inline-flex">
-        <TeamAvatar url={team.avatar_url} name={team.name} size={size} />
-      </span>
+      <TeamAvatar url={team.avatar_url} name={team.name} size={size} />
       <span className="truncate">{team.name}</span>
     </span>
   );
@@ -257,7 +255,7 @@ function Standings({ rows, playoffTeams }: { rows: StandingRow[]; playoffTeams: 
                 </td>
                 <td className="py-1 text-right tabular-nums text-[var(--paper-ink-2)]">{s.pointsFor.toFixed(0)}</td>
                 <td className="py-1 text-right text-xs tabular-nums" title={move ? `${move > 0 ? "Up" : "Down"} ${Math.abs(move)} from last week` : "No change"}>
-                  {move > 0 ? `▲${move}` : move < 0 ? <span className="text-[var(--paper-accent)]">▼{-move}</span> : <span className="text-[var(--paper-faint)]">–</span>}
+                  {move > 0 ? <span className="text-[var(--paper-up)]">▲{move}</span> : move < 0 ? <span className="text-[var(--paper-accent)]">▼{-move}</span> : <span className="text-[var(--paper-faint)]">–</span>}
                 </td>
               </tr>
             );
@@ -289,9 +287,7 @@ function PlayerList({
         <ol className="space-y-2.5">
           {players.map((p) => (
             <li key={p.player_id} className="flex items-center gap-3">
-              <span className="halftone inline-flex">
-                <PlayerAvatar id={p.player_id} name={p.name} size={34} />
-              </span>
+              <PlayerAvatar id={p.player_id} name={p.name} size={34} />
               <span className="min-w-0 flex-1 leading-tight">
                 <Link href={`/players/${p.player_id}`} className="block truncate font-semibold hover:underline">
                   {p.name}
@@ -411,9 +407,9 @@ function PreviewStory({ story, preview }: { story: Story; preview: Preview }) {
           );
         })}
       </div>
-      {/* Favorite's win probability as a split bar */}
-      <div className="mt-2 flex h-1.5 overflow-hidden rounded-full bg-[var(--paper-hair)]" title={`${pct}% favorite`}>
-        <div className="bg-[var(--paper-ink)]" style={{ width: `${pct}%` }} />
+      {/* Win probability as a split bar: favorite in green, underdog in red */}
+      <div className="mt-2 flex h-1.5 overflow-hidden rounded-full bg-[var(--paper-accent)]" title={`${pct}% favorite`}>
+        <div className="bg-[var(--paper-up)]" style={{ width: `${pct}%` }} />
       </div>
       <p className="kicker mt-1 text-[var(--paper-faint)]">
         {sides[0].team.name} {pct}% to win

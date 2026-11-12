@@ -301,6 +301,7 @@ body {
   --paper-rule: #111111;
   --paper-hair: rgba(17, 17, 17, 0.18);
   --paper-accent: #a3311f;
+  --paper-up: #1e7b34;
 }
 
 .paper {
@@ -343,8 +344,4 @@ body {
   font-size: 3.4em;
   line-height: 0.85;
   padding: 0.05em 0.08em 0 0;
-}
-/* Newsprint photos */
-.paper .halftone img {
-  filter: grayscale(1) contrast(1.1);
 }
