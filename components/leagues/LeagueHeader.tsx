@@ -8,7 +8,10 @@ const TABS = [
   { id: "standings", label: "Standings", href: "/league" },
   { id: "power", label: "Power rankings", href: "/league/power" },
   { id: "paper", label: "League paper", href: "/league/news" },
+  { id: "gameday", label: "Gameday", href: "/league/gameday" },
 ] as const;
+
+type Tab = (typeof TABS)[number]["id"];
 
 // Shared by the league pages: league name, switcher, my-team picker, and tabs
 export function LeagueHeader({
@@ -22,7 +25,7 @@ export function LeagueHeader({
   leagues: { league_id: string; name: string }[];
   teams: Team[];
   myUserId: string | null;
-  tab: (typeof TABS)[number]["id"];
+  tab: Tab;
 }) {
   return (
     <div className="mb-6">
@@ -54,20 +57,26 @@ export function LeagueHeader({
         ))}
       </ul>
 
-      <nav className="mt-4 flex gap-1 overflow-x-auto border-b border-line text-sm">
-        {TABS.map((t) => (
-          <Link
-            key={t.id}
-            href={t.href}
-            className={`-mb-px shrink-0 border-b-2 px-3 py-2 ${
-              t.id === tab ? "border-accent font-medium text-ink" : "border-transparent text-ink-2 hover:text-ink"
-            }`}
-          >
-            {t.label}
-          </Link>
-        ))}
-      </nav>
+      <LeagueTabs tab={tab} />
     </div>
+  );
+}
+
+export function LeagueTabs({ tab }: { tab: Tab }) {
+  return (
+    <nav className="mt-4 flex gap-1 overflow-x-auto border-b border-line text-sm">
+      {TABS.map((t) => (
+        <Link
+          key={t.id}
+          href={t.href}
+          className={`-mb-px shrink-0 border-b-2 px-3 py-2 ${
+            t.id === tab ? "border-accent font-medium text-ink" : "border-transparent text-ink-2 hover:text-ink"
+          }`}
+        >
+          {t.label}
+        </Link>
+      ))}
+    </nav>
   );
 }
 
