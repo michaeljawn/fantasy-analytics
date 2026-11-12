@@ -1,8 +1,8 @@
-# Fantasy Football Analytics
+# The Front Office
 
 **Personal Project | PostgreSQL, SQL, TypeScript, Next.js, Data Analytics**
 
-A fantasy football analytics dashboard built on a PostgreSQL analytics layer. It pulls weekly NFL stats and projections from the Sleeper API into Postgres, computes fantasy points and advanced metrics in SQL views, and serves them through a Next.js dashboard.
+The Front Office is a home base for a fantasy football league: standings, matchups, and a weekly league paper, plus analytics tools for every manager. It's built on a PostgreSQL analytics layer. It pulls weekly NFL stats and projections from the Sleeper API into Postgres, computes fantasy points and advanced metrics in SQL views, and serves them through a Next.js dashboard.
 
 ---
 
