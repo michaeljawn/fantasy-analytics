@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { LeagueHeader } from "@/components/leagues/LeagueHeader";
 import { Edition } from "@/components/newspaper/Edition";
 import { SetupNotice } from "@/components/SetupNotice";
-import { getLeagueId } from "@/lib/league";
+import { getLeague, getLeagueId, getMyUserId, getSwitcherLeagues, getTeams } from "@/lib/league";
 import { getEdition, listEditions } from "@/lib/newspaper/queries";
 import { safeLoad } from "@/lib/safe";
 
@@ -9,21 +10,34 @@ import { safeLoad } from "@/lib/safe";
 export async function EditionPage({ week }: { week?: number }) {
   const result = await safeLoad(async () => {
     const leagueId = await getLeagueId();
-    if (!leagueId) return null;
-    const [edition, archive] = await Promise.all([getEdition(leagueId, week), listEditions(leagueId)]);
-    return { edition, archive };
+    const league = leagueId ? await getLeague(leagueId) : null;
+    if (!league) return null;
+    const [edition, archive, teams, myUserId, switcher] = await Promise.all([
+      getEdition(league.league_id, week),
+      listEditions(league.league_id),
+      getTeams(league.league_id),
+      getMyUserId(),
+      getSwitcherLeagues(league),
+    ]);
+    return { league, edition, archive, teams, myUserId, switcher };
   });
 
-  if (result.error) return <SetupNotice error={result.error} />;
-  if (!result.data?.edition) {
-    if (week != null) notFound();
-    return <NoEditions />;
-  }
-  const { edition, archive } = result.data;
+  if (result.error != null) return <SetupNotice error={result.error} />;
+  if (!result.data) return <NoEditions />;
+  const { league, edition, archive, teams, myUserId, switcher } = result.data;
+  if (!edition && week != null) notFound();
+
   return (
-    <div className="mx-auto max-w-6xl">
-      <Edition edition={edition.content} publishedAt={edition.published_at} writer={edition.writer} archive={archive} />
-    </div>
+    <>
+      <LeagueHeader league={league} leagues={switcher} teams={teams} myUserId={myUserId} tab="paper" />
+      {edition ? (
+        <div className="mx-auto max-w-6xl">
+          <Edition edition={edition.content} publishedAt={edition.published_at} writer={edition.writer} archive={archive} />
+        </div>
+      ) : (
+        <NoEditions />
+      )}
+    </>
   );
 }
 

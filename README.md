@@ -13,6 +13,7 @@ The Front Office is a home base for a fantasy football league: standings, matchu
 | **Home** | Animated landing page built on live data: the hottest player right now, a ribbon of today’s most-added players, a buy-low / sell-high spotlight, and a live dynasty trade |
 | **Overview** | Waiver buzz, players heating up, last week's top scorers, softest defenses by position |
 | **League** | Your Sleeper league: standings with the playoff line, every week's matchups and top scorers, and your roster (pick your team once and the site remembers it). Add as many leagues as you like and switch between them. |
+| **Power rankings** | Every team ranked by how it's built and how it has played: best-lineup projection, dynasty value (including owned rookie picks), all-play record, QB/RB/WR/TE room ranks, and a read on each build (Juggernaut, Win-now, Rising, Rebuild, …) |
 | **Your leagues** | Find your leagues by Sleeper username (which also picks your team in each) or add one by league ID. The site imports it in a couple of seconds and publishes its latest paper. |
 | **League paper** | A weekly newspaper about your league, the same for everyone: a front-page story on the game of the week, recaps of every matchup, stars and duds, awards (high score, luckiest win, toughest loss), bench blunders, the transaction wire, standings movement, and previews of next week with projections in your league's scoring |
 | **Trending** | Most added/dropped players across Sleeper leagues (24h / 3d / 7d), form risers and fallers (last 3 games vs. season), snap share risers, and buy-low / sell-high players where the market and our model disagree |
@@ -62,6 +63,7 @@ Sleeper API ──► scripts/ingest.ts ──► PostgreSQL (tables + analytics
 - **Trade value** (`blend.ts`, `values.ts`): 60% market value from [FantasyCalc](https://fantasycalc.com) (prices from real fantasy trades) + 40% model value. The model is first mapped onto the market’s value curve by rank, so the two are compared on rank, not curve shape. When they differ by 25%+ the player is tagged **buy low** (model higher) or **sell high** (market higher). Injured players are never tagged. Falls back to model-only if FantasyCalc is unavailable.
 - **Draft picks** (`picks.ts`): market values when available, otherwise fixed values on the dynasty scale. An early 1st is worth about a top-15 dynasty WR. Picks two drafts out are discounted 15%, and Superflex boosts 1sts and 2nds.
 - **Start/sit** (`startsit.ts`): 60% projection + 40% recent form × matchup factor. The matchup factor is shrunk halfway toward neutral because defensive samples are noisy.
+- **Power rankings** (`power.ts`): the best lineup each roster can field (outlook × availability, filling the most restrictive slots first) blended with results (60% all-play win rate, 40% points per game). Results count for nothing before week 1 and grow to half the score by week 8. Dynasty value adds the rookie picks each team owns over the next three drafts, with next year's slot guessed from the original owner's place in the standings.
 
 ---
 

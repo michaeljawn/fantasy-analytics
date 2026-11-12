@@ -44,7 +44,14 @@ export async function getLeagueId(): Promise<string | null> {
   return getDefaultLeagueId();
 }
 
-export type LeagueSummary = { league_id: string; name: string; season: number; avatar: string | null; total_rosters: number };
+// Leagues for the switcher. The league showing may be the site's default rather than one this
+// browser added, so it's always included.
+export async function getSwitcherLeagues(showing: { league_id: string; name: string }) {
+  const mine = await getMyLeagues();
+  return mine.some((l) => l.league_id === showing.league_id) ? mine : [showing, ...mine];
+}
+
+export type LeagueSummary ={ league_id: string; name: string; season: number; avatar: string | null; total_rosters: number };
 
 export async function getMyLeagues(): Promise<LeagueSummary[]> {
   const ids = await getMyLeagueIds();
