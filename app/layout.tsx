@@ -7,8 +7,9 @@ import { getFormat } from "@/lib/format";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Fantasy Analytics",
-  description: "Trending players, rankings, start/sit, and trade analysis built on NFL weekly stats.",
+  title: { default: "The Front Office", template: "%s · The Front Office" },
+  description:
+    "Your fantasy league's front office: standings, a weekly league paper, trending players, rankings, start/sit, and trade analysis.",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -19,7 +20,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <header className="sticky top-0 z-20 border-b border-line bg-page/90 backdrop-blur">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3">
             <Link href="/" className="text-base font-semibold tracking-tight">
-              Fantasy Analytics
+              The Front Office
             </Link>
             <Nav />
             <div className="flex w-full items-center gap-3 sm:ml-auto sm:w-auto">
