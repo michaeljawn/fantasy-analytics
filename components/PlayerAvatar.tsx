@@ -4,7 +4,17 @@ import Image from "next/image";
 import { useState } from "react";
 
 // Sleeper headshot, falling back to initials when a player has no photo
-export function PlayerAvatar({ id, name, size = 24 }: { id: string; name: string; size?: number }) {
+export function PlayerAvatar({
+  id,
+  name,
+  size = 24,
+  background = "bg-surface-2 text-ink-2",
+}: {
+  id: string;
+  name: string;
+  size?: number;
+  background?: string;
+}) {
   const [failed, setFailed] = useState(false);
   const initials = name
     .split(" ")
@@ -15,7 +25,7 @@ export function PlayerAvatar({ id, name, size = 24 }: { id: string; name: string
 
   return (
     <span
-      className="relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-2 text-ink-2"
+      className={`relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full ${background}`}
       style={{ width: size, height: size, fontSize: Math.max(size * 0.36, 9) }}
       aria-hidden
     >

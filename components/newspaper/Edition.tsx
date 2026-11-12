@@ -287,7 +287,12 @@ function PlayerList({
         <ol className="space-y-2.5">
           {players.map((p) => (
             <li key={p.player_id} className="flex items-center gap-3">
-              <PlayerAvatar id={p.player_id} name={p.name} size={34} />
+              <PlayerAvatar
+                id={p.player_id}
+                name={p.name}
+                size={34}
+                background="bg-[var(--paper-photo)] text-[var(--paper-ink-2)]"
+              />
               <span className="min-w-0 flex-1 leading-tight">
                 <Link href={`/players/${p.player_id}`} className="block truncate font-semibold hover:underline">
                   {p.name}

@@ -302,6 +302,7 @@ body {
   --paper-hair: rgba(17, 17, 17, 0.18);
   --paper-accent: #a3311f;
   --paper-up: #1e7b34;
+  --paper-photo: #e8e8e8;
 }
 
 .paper {
