@@ -290,39 +290,17 @@ body {
 }
 
 /* ──────────────────────────────────────────────
-   League newspaper (newsprint, light and dark)
+   League newspaper (black ink on white, in both themes)
    ────────────────────────────────────────────── */
 
 :root {
-  --paper: #f5f0e6;
-  --paper-ink: #1c1a16;
-  --paper-ink-2: #4a453c;
-  --paper-faint: #857d6f;
-  --paper-rule: #2a2620;
-  --paper-hair: rgba(28, 26, 22, 0.18);
+  --paper: #ffffff;
+  --paper-ink: #111111;
+  --paper-ink-2: #444444;
+  --paper-faint: #777777;
+  --paper-rule: #111111;
+  --paper-hair: rgba(17, 17, 17, 0.18);
   --paper-accent: #a3311f;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #1b1a17;
-    --paper-ink: #ebe5d8;
-    --paper-ink-2: #bdb6a7;
-    --paper-faint: #8c8577;
-    --paper-rule: #d9d2c3;
-    --paper-hair: rgba(235, 229, 216, 0.16);
-    --paper-accent: #e07a5f;
-  }
-}
-
-:root[data-theme="dark"] {
-  --paper: #1b1a17;
-  --paper-ink: #ebe5d8;
-  --paper-ink-2: #bdb6a7;
-  --paper-faint: #8c8577;
-  --paper-rule: #d9d2c3;
-  --paper-hair: rgba(235, 229, 216, 0.16);
-  --paper-accent: #e07a5f;
 }
 
 .paper {
