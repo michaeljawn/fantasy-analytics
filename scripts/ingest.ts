@@ -7,9 +7,8 @@
 //
 // Docs: https://docs.sleeper.com
 
-import { Pool } from "pg";
+import { arg, fetchJson, pool, run, SLEEPER_V1, sleep, upsert } from "./shared";
 
-const SLEEPER_V1 = "https://api.sleeper.app/v1";
 const SLEEPER_STATS = "https://api.sleeper.com";
 const POSITIONS = ["QB", "RB", "WR", "TE"];
 const PROJECTION_WEEKS_AHEAD = 2;
@@ -20,10 +19,6 @@ const weeksInSeason = (season: number) => (season >= 2021 ? 18 : 17);
 // Relocated franchises use their current code, so a defense's history lines up across seasons
 const TEAM_ALIASES: Record<string, string> = { OAK: "LV", SD: "LAC", STL: "LAR", LA: "LAR", JAC: "JAX", WSH: "WAS" };
 const team = (code: string | null | undefined) => (code ? (TEAM_ALIASES[code] ?? code) : null);
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL ?? "postgres://fantasy:fantasy@localhost:5433/fantasy",
-});
 
 // ──────────────────────────────────────────────
 // Sleeper API helpers
@@ -44,6 +39,7 @@ type SleeperPlayer = {
   first_name?: string;
   last_name?: string;
   position?: string;
+  fantasy_positions?: string[] | null;
   team?: string | null;
   age?: number | null;
   years_exp?: number | null;
@@ -52,28 +48,24 @@ type SleeperPlayer = {
   active?: boolean;
 };
 
-async function fetchJson<T>(url: string, retries = 3): Promise<T> {
-  for (let attempt = 1; ; attempt++) {
-    try {
-      const res = await fetch(url, { headers: { "User-Agent": "FantasyAnalytics/2.0" } });
-      if (res.status === 429) throw new Error("rate limited");
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return (await res.json()) as T;
-    } catch (err) {
-      if (attempt >= retries) throw new Error(`${url}: ${(err as Error).message}`);
-      await sleep(1500 * attempt);
-    }
-  }
-}
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
 function positionQuery() {
   return POSITIONS.map((p) => `position[]=${p}`).join("&");
 }
 
+// Offensive position for fantasy purposes. Two-way players are listed by their primary position
+// (Travis Hunter is a DB with WR eligibility), so fall back to their offensive eligibility.
+// Fullbacks stay out: Sleeper's position filter matches them as RBs.
+function skillPosition(p: SleeperPlayer) {
+  if (p.position && POSITIONS.includes(p.position)) return p.position;
+  if (p.position === "FB") return undefined;
+  return p.fantasy_positions?.find((f) => POSITIONS.includes(f));
+}
+
+// player_id → offensive position, from the current registry (filled by loadPlayers)
+const registryPositions = new Map<string, string>();
+
 function isSkillPlayer(r: SleeperStatRow) {
-  return POSITIONS.includes(r.player?.position ?? "");
+  return registryPositions.has(r.player_id) || POSITIONS.includes(r.player?.position ?? "");
 }
 
 // Some older weeks list the same player-game twice under different game IDs (e.g. 2015 week 1)
@@ -93,12 +85,18 @@ async function loadPlayers() {
   console.log("Fetching player registry (~5 MB)…");
   const registry = await fetchJson<Record<string, SleeperPlayer>>(`${SLEEPER_V1}/players/nfl`);
 
-  const rows = Object.entries(registry)
-    .filter(([, p]) => p.position && POSITIONS.includes(p.position) && p.first_name && p.last_name)
-    .map(([id, p]) => [
-      id, p.first_name, p.last_name, p.position, team(p.team),
+  for (const [id, p] of Object.entries(registry)) {
+    const position = skillPosition(p);
+    if (position && p.first_name && p.last_name) registryPositions.set(id, position);
+  }
+
+  const rows = [...registryPositions].map(([id, position]) => {
+    const p = registry[id];
+    return [
+      id, p.first_name, p.last_name, position, team(p.team),
       p.age ?? null, p.years_exp ?? null, p.injury_status ?? null, p.birth_date || null, p.active ?? false,
-    ]);
+    ];
+  });
 
   await upsert(
     "players",
@@ -194,36 +192,6 @@ async function loadWeekProjections(season: number, week: number) {
 // SQL helpers
 // ──────────────────────────────────────────────
 
-async function upsert(
-  table: string,
-  columns: string[],
-  key: string[],
-  rows: unknown[][],
-  opts: { doNothing?: boolean } = {},
-) {
-  const updates = columns.filter((c) => !key.includes(c)).map((c) => `${c} = EXCLUDED.${c}`);
-  const conflict = opts.doNothing
-    ? "DO NOTHING"
-    : `DO UPDATE SET ${updates.join(", ")}${table === "players" ? ", updated_at = now()" : ""}`;
-
-  for (let i = 0; i < rows.length; i += 500) {
-    const chunk = rows.slice(i, i + 500);
-    const params: unknown[] = [];
-    const tuples = chunk.map((row) => {
-      const placeholders = row.map((v) => {
-        params.push(v);
-        return `$${params.length}`;
-      });
-      return `(${placeholders.join(", ")})`;
-    });
-    await pool.query(
-      `INSERT INTO ${table} (${columns.join(", ")}) VALUES ${tuples.join(", ")}
-       ON CONFLICT (${key.join(", ")}) ${conflict}`,
-      params,
-    );
-  }
-}
-
 async function logIngest(season: number, week: number, kind: string, count: number) {
   await pool.query(
     `INSERT INTO ingest_log (season, week, kind, rows_loaded) VALUES ($1, $2, $3, $4)
@@ -243,11 +211,6 @@ function parseRange(value: string): number[] {
     for (let i = start; i <= (end ?? start); i++) out.add(i);
   }
   return [...out].sort((a, b) => a - b);
-}
-
-function arg(name: string): string | undefined {
-  const i = process.argv.indexOf(`--${name}`);
-  return i >= 0 ? process.argv[i + 1] : undefined;
 }
 
 async function main() {
@@ -280,11 +243,6 @@ async function main() {
   }
 
   console.log("✓ Ingest complete");
-  await pool.end();
 }
 
-main().catch(async (err) => {
-  console.error(err);
-  await pool.end();
-  process.exit(1);
-});
+run(main);
