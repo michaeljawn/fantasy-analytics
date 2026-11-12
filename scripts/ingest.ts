@@ -85,12 +85,16 @@ async function loadPlayers() {
   console.log("Fetching player registry (~5 MB)…");
   const registry = await fetchJson<Record<string, SleeperPlayer>>(`${SLEEPER_V1}/players/nfl`);
 
+  // Kickers and team defenses are stored too, so league rosters can show their names, but they
+  // stay out of registryPositions: there are no K/DEF stats or projections yet (#17)
+  const lineupOnly = new Map<string, string>();
   for (const [id, p] of Object.entries(registry)) {
     const position = skillPosition(p);
     if (position && p.first_name && p.last_name) registryPositions.set(id, position);
+    else if ((p.position === "K" || p.position === "DEF") && p.first_name && p.last_name) lineupOnly.set(id, p.position);
   }
 
-  const rows = [...registryPositions].map(([id, position]) => {
+  const rows = [...registryPositions, ...lineupOnly].map(([id, position]) => {
     const p = registry[id];
     return [
       id, p.first_name, p.last_name, position, team(p.team),
@@ -104,7 +108,7 @@ async function loadPlayers() {
     ["player_id"],
     rows,
   );
-  console.log(`  ✓ ${rows.length} players`);
+  console.log(`  ✓ ${registryPositions.size} players, plus ${lineupOnly.size} kickers and defenses`);
 }
 
 // Players that appear in historical stats but are no longer in the registry

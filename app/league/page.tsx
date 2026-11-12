@@ -282,7 +282,7 @@ function Roster({ players, slots }: { players: RosterPlayer[]; slots: string[] }
                   )}
                   <PosBadge position={p.position ?? "?"} />
                   <span className="flex min-w-0 overflow-hidden">
-                    <PlayerLink id={p.player_id} name={p.name} />
+                    <PlayerLink id={p.player_id} name={p.name} position={p.position} />
                   </span>
                   <span className="shrink-0 text-xs text-muted">{p.team ?? "FA"}</span>
                   <InjuryTag status={p.injury_status} />
