@@ -12,7 +12,8 @@ The Front Office is a home base for a fantasy football league: standings, matchu
 |------|--------------|
 | **Home** | Animated landing page built on live data: the hottest player right now, a ribbon of today’s most-added players, a buy-low / sell-high spotlight, and a live dynasty trade |
 | **Overview** | Waiver buzz, players heating up, last week's top scorers, softest defenses by position |
-| **League** | Your Sleeper league: standings with the playoff line, every week's matchups and top scorers, and your roster (pick your team once and the site remembers it) |
+| **League** | Your Sleeper league: standings with the playoff line, every week's matchups and top scorers, and your roster (pick your team once and the site remembers it). Add as many leagues as you like and switch between them. |
+| **Your leagues** | Find your leagues by Sleeper username (which also picks your team in each) or add one by league ID. The site imports it in a couple of seconds and publishes its latest paper. |
 | **League paper** | A weekly newspaper about your league, the same for everyone: a front-page story on the game of the week, recaps of every matchup, stars and duds, awards (high score, luckiest win, toughest loss), bench blunders, the transaction wire, standings movement, and previews of next week with projections in your league's scoring |
 | **Trending** | Most added/dropped players across Sleeper leagues (24h / 3d / 7d), form risers and fallers (last 3 games vs. season), snap share risers, and buy-low / sell-high players where the market and our model disagree |
 | **Rankings** | Rest-of-season outlook with tiers, VOR, and trade value, or full season stats (2014–present) with floor, ceiling, boom/bust rates, and snap share |
@@ -77,23 +78,26 @@ npm run dev            # http://localhost:3000
 
 During the season, run `npm run ingest` to refresh the current season and upcoming projections. You can also target specific weeks: `npm run ingest -- --seasons 2026 --weeks 7`.
 
-### Your league
+### Your leagues
 
-Import a Sleeper league with its ID, the number in the league's URL on sleeper.com:
+Add leagues on the site at **/leagues**, by Sleeper username or league ID (the number in the league's URL on sleeper.com). Each browser keeps its own list of leagues in a cookie, and picks which one to show with the League switcher; the data and the paper are shared, so everyone in a league sees the same thing. Visitors who haven't added a league see the site's home league: `LEAGUE_ID` in `.env.local` if set, otherwise the first league imported.
+
+You can also import from the command line:
 
 ```bash
-npm run league -- --league <league ID>
+npm run league -- --league <league ID>   # one league, plus past seasons
+npm run league                           # refresh every imported league
 ```
 
-This loads the league's settings, managers, rosters, every week's matchups, transactions, and traded picks, then follows `previous_league_id` to import past seasons too (`--no-history` skips them). Re-run it to refresh. To pin the site to one league, add `LEAGUE_ID=<league ID>` to `.env.local`; otherwise the most recently imported season is used.
+This loads the league's settings, managers, rosters, every week's matchups, transactions, and traded picks (`lib/league-import.ts`). From the command line it also follows `previous_league_id` to import past seasons (`--no-history` skips them); adding a league on the site imports this season only, to keep it quick.
 
 ### League paper
 
-After each week's games are final, refresh the league and publish that week's edition:
+After each week's games are final, refresh the leagues and publish that week's edition:
 
 ```bash
 npm run league
-npm run paper                  # latest final week; or --week 9
+npm run paper                  # latest final week for every league; or --league <id> --week 9
 ```
 
 Every fact (scores, awards, standings, all-play luck, projections) is computed in `lib/newspaper/facts.ts`, and `lib/newspaper/writer.ts` turns them into stories from templates. Each edition is stored whole in `league_editions`, so everyone reads the same paper and it never changes; `--force` rewrites one. Previews score Sleeper's projected stats with the league's own rules (`lib/newspaper/scoring.ts`, which reproduces Sleeper's points exactly).

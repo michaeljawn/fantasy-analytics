@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LeagueSwitcher } from "@/components/leagues/LeagueSwitcher";
 import { SetupNotice } from "@/components/SetupNotice";
 import { TeamAvatar } from "@/components/TeamAvatar";
 import { TeamPicker } from "@/components/TeamPicker";
@@ -6,6 +7,7 @@ import { Card, Empty, InjuryTag, PlayerLink, PosBadge, Segmented, fmt } from "@/
 import {
   getLeague,
   getLeagueId,
+  getMyLeagues,
   getMyUserId,
   getRoster,
   getScheduleWeeks,
@@ -28,10 +30,11 @@ export default async function LeaguePage({ searchParams }: { searchParams: Promi
     const league = leagueId ? await getLeague(leagueId) : null;
     if (!leagueId || !league) return null;
 
-    const [teams, weeks, myUserId] = await Promise.all([
+    const [teams, weeks, myUserId, myLeagues] = await Promise.all([
       getTeams(leagueId),
       getScheduleWeeks(leagueId, league.playoffWeekStart),
       getMyUserId(),
+      getMyLeagues(),
     ]);
     const defaultWeek = league.lastScoredWeek > 0 ? league.lastScoredWeek : league.currentWeek;
     const week = weeks.includes(Number(params.week)) ? Number(params.week) : defaultWeek;
@@ -41,12 +44,16 @@ export default async function LeaguePage({ searchParams }: { searchParams: Promi
       getWeekMatchups(leagueId, week),
       myTeam ? getRoster(leagueId, myTeam.roster_id) : Promise.resolve(null),
     ]);
-    return { league, teams, weeks, week, matchups, myTeam, roster };
+    // The league showing may be the site's default rather than one this browser added
+    const switcher = myLeagues.some((l) => l.league_id === leagueId)
+      ? myLeagues
+      : [{ league_id: leagueId, name: league.name, season: league.season }, ...myLeagues];
+    return { league, teams, weeks, week, matchups, myTeam, roster, switcher };
   });
 
   if (result.error) return <SetupNotice error={result.error} />;
   if (!result.data) return <NoLeague />;
-  const { league, teams, weeks, week, matchups, myTeam, roster } = result.data;
+  const { league, teams, weeks, week, matchups, myTeam, roster, switcher } = result.data;
   const byRoster = new Map(teams.map((t) => [t.roster_id, t]));
 
   return (
@@ -66,6 +73,7 @@ export default async function LeaguePage({ searchParams }: { searchParams: Promi
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          <LeagueSwitcher leagues={switcher} value={league.league_id} />
           <Link
             href="/league/news"
             className="rounded-md border border-line bg-surface px-3 py-1.5 text-sm font-medium hover:border-accent hover:text-accent"
@@ -84,7 +92,8 @@ export default async function LeaguePage({ searchParams }: { searchParams: Promi
         ))}
       </ul>
 
-      <div className="grid items-start gap-4 lg:grid-cols-3">
+      {/* min-w-0 lets the wide standings table scroll inside its card instead of widening the page */}
+      <div className="grid items-start gap-4 lg:grid-cols-3 [&>*]:min-w-0">
         <Card
           title="Standings"
           subtitle={`Top ${league.playoffTeams} make the playoffs (week ${league.playoffWeekStart})`}
@@ -97,7 +106,9 @@ export default async function LeaguePage({ searchParams }: { searchParams: Promi
           title={myTeam ? myTeam.team_name : "My team"}
           subtitle={myTeam ? `${myTeam.display_name} · ${record(myTeam)}` : undefined}
         >
-          {roster ? (
+          {roster?.length === 0 ? (
+            <Empty>No players yet. Your roster shows up here after the draft.</Empty>
+          ) : roster ? (
             <Roster players={roster} slots={league.roster_positions} />
           ) : (
             <Empty>Choose your team above to see your roster here.</Empty>
@@ -288,16 +299,14 @@ function Roster({ players, slots }: { players: RosterPlayer[]; slots: string[] }
 function NoLeague() {
   return (
     <div className="mx-auto max-w-xl rounded-lg border border-line bg-surface p-6">
-      <h1 className="text-base font-semibold">No league imported yet</h1>
-      <p className="mt-2 text-sm text-ink-2">
-        Import your Sleeper league. The league ID is the number in your league&apos;s URL on sleeper.com.
-      </p>
-      <pre className="mt-3 overflow-x-auto rounded-md bg-surface-2 p-3 text-xs">
-        {`npm run league -- --league <league ID>`}
-      </pre>
-      <p className="mt-3 text-xs text-muted">
-        To make it the site&apos;s league for good, add <code>LEAGUE_ID=&lt;league ID&gt;</code> to <code>.env.local</code>.
-      </p>
+      <h1 className="text-base font-semibold">No league yet</h1>
+      <p className="mt-2 text-sm text-ink-2">Add your Sleeper league by username or league ID.</p>
+      <Link
+        href="/leagues"
+        className="mt-4 inline-block rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white hover:brightness-110"
+      >
+        Add a league
+      </Link>
     </div>
   );
 }
