@@ -14,7 +14,7 @@ export function ThemeToggle({ initial }: { initial: "dark" | "light" }) {
         document.cookie = `theme=${next}; path=/; max-age=31536000; samesite=lax`;
         setTheme(next);
       }}
-      className="grid size-8 shrink-0 place-items-center rounded-md border border-line text-ink-2 transition hover:border-accent hover:text-ink"
+      className="grid size-8 shrink-0 place-items-center rounded-full border border-line text-ink-2 transition hover:rotate-12 hover:border-accent hover:text-ink"
       aria-label={`Switch to ${next} mode`}
       title={`Switch to ${next} mode`}
     >

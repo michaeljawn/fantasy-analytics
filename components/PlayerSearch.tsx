@@ -64,10 +64,10 @@ export function PlayerSearch() {
           if (e.key === "Enter" && results[active]) go(results[active]);
           if (e.key === "Escape") setOpen(false);
         }}
-        className="w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-sm outline-none placeholder:text-muted focus:border-accent sm:w-56"
+        className="w-full rounded-full border border-line bg-surface-2/50 px-3.5 py-1.5 text-sm outline-none transition-[width,border-color,background-color] placeholder:text-muted focus:border-accent focus:bg-surface sm:w-40 sm:focus:w-56"
       />
       {open && results.length > 0 && (
-        <ul className="absolute right-0 z-30 mt-1 w-64 overflow-hidden rounded-md border border-line bg-surface shadow-lg">
+        <ul className="pop-in absolute right-0 z-30 mt-2 w-64 overflow-hidden rounded-xl border border-line bg-surface/95 shadow-2xl backdrop-blur-xl">
           {results.map((p, i) => (
             <li key={p.player_id}>
               <button

@@ -13,7 +13,7 @@ export default async function LandingPage() {
   const { data } = await safeLoad(() => getLandingData(format));
 
   return (
-    <div className="-mt-6">
+    <div className="-mt-8">
       <Hero data={data} />
       {data && data.trending.length > 0 && <TrendingRibbon players={data.trending} />}
       {data && <Stats counts={data.counts} />}

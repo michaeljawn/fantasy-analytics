@@ -150,7 +150,7 @@ function BuildCard({ team: t, n, dynasty, mine }: { team: PowerTeam; n: number; 
   const best = ranked[0];
   const worst = ranked[ranked.length - 1];
   return (
-    <section className={`rounded-lg border bg-surface p-4 ${mine ? "border-accent" : "border-line"}`}>
+    <section className={`panel p-4 ${mine ? "border-accent" : "border-line"}`}>
       <div className="flex items-start gap-3">
         <span className="score w-7 shrink-0 text-3xl leading-none text-accent italic">{t.rank}</span>
         <div className="min-w-0 flex-1">

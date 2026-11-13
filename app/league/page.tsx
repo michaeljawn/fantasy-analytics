@@ -260,7 +260,7 @@ function Roster({ players, slots }: { players: RosterPlayer[]; slots: string[] }
 
 function NoLeague() {
   return (
-    <div className="mx-auto max-w-xl rounded-lg border border-line bg-surface p-6">
+    <div className="mx-auto max-w-xl panel p-6">
       <h1 className="text-base font-semibold">No league yet</h1>
       <p className="mt-2 text-sm text-ink-2">Add your Sleeper league by username or league ID.</p>
       <Link

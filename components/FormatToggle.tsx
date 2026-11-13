@@ -17,7 +17,7 @@ export function FormatToggle({ value }: { value: Format }) {
     <div
       role="radiogroup"
       aria-label="Scoring format"
-      className={`flex rounded-md border border-line p-0.5 text-xs ${pending ? "opacity-60" : ""}`}
+      className={`flex rounded-full border border-line bg-surface-2/40 p-0.5 text-xs ${pending ? "opacity-60" : ""}`}
     >
       {FORMATS.map((f) => (
         <button
@@ -25,7 +25,7 @@ export function FormatToggle({ value }: { value: Format }) {
           role="radio"
           aria-checked={value === f.id}
           onClick={() => select(f.id)}
-          className={`rounded px-2 py-1 ${value === f.id ? "bg-surface-2 font-medium text-ink" : "text-ink-2 hover:text-ink"}`}
+          className={`rounded-full px-2.5 py-1 transition-colors ${value === f.id ? "bg-surface-2 font-semibold text-ink shadow-sm" : "text-ink-2 hover:text-ink"}`}
         >
           {f.label}
         </button>

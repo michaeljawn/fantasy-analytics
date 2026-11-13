@@ -156,7 +156,7 @@ export function TradeCalculator({
           const list = side === "a" ? a : b;
           const value = side === "a" ? verdict.sideA : verdict.sideB;
           return (
-            <section key={side} className="rounded-lg border border-line bg-surface p-4">
+            <section key={side} className="panel p-4">
               <header className="mb-3 flex items-baseline justify-between">
                 <h2 className="flex items-center gap-2 text-sm font-semibold">
                   <span aria-hidden className="inline-block size-2.5 rounded-sm" style={{ background: side === "a" ? "var(--series-1)" : "var(--series-2)" }} />
@@ -211,7 +211,7 @@ export function TradeCalculator({
       </div>
 
       {a.length > 0 && b.length > 0 && (
-        <section className="rounded-lg border border-line bg-surface p-4">
+        <section className="panel p-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 className="text-lg font-semibold">
               {verdict.favored == null ? "Fair trade" : `${verdict.label}: Team ${verdict.favored} wins`}
