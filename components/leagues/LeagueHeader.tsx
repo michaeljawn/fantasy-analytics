@@ -8,7 +8,6 @@ const TABS = [
   { id: "standings", label: "Standings", href: "/league" },
   { id: "power", label: "Power rankings", href: "/league/power" },
   { id: "paper", label: "League paper", href: "/league/news" },
-  { id: "gameday", label: "Gameday", href: "/league/gameday" },
 ] as const;
 
 type Tab = (typeof TABS)[number]["id"];

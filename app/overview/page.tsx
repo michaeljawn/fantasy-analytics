@@ -132,11 +132,11 @@ export default async function OverviewPage() {
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <Link href="/trade" className="rounded-lg border border-line bg-surface p-4 hover:border-accent">
+        <Link href="/trade" className="panel lift p-4">
           <div className="text-sm font-semibold">Trade calculator →</div>
           <p className="mt-1 text-xs text-ink-2">Value both sides of a deal and get suggestions to even it out.</p>
         </Link>
-        <Link href="/start-sit" className="rounded-lg border border-line bg-surface p-4 hover:border-accent">
+        <Link href="/start-sit" className="panel lift p-4">
           <div className="text-sm font-semibold">Start/sit →</div>
           <p className="mt-1 text-xs text-ink-2">Compare players for Week {ctx.upcomingWeek} using projections, form, and matchup.</p>
         </Link>

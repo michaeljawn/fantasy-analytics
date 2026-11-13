@@ -43,7 +43,7 @@ export async function EditionPage({ week }: { week?: number }) {
 
 function NoEditions() {
   return (
-    <div className="mx-auto max-w-xl rounded-lg border border-line bg-surface p-6">
+    <div className="mx-auto max-w-xl panel p-6">
       <h1 className="text-base font-semibold">No editions published yet</h1>
       <p className="mt-2 text-sm text-ink-2">
         The league paper comes out after each week&apos;s games are final, so the first edition arrives after week 1.

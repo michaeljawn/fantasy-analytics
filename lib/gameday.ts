@@ -278,3 +278,13 @@ async function getTeamNames(keys: { league: string; roster: number }[]) {
   );
   return new Map(rows.map((r) => [`${r.league_id}:${r.roster_id}`, r.name]));
 }
+
+// How many NFL games are on right now (for the live dot on the Gameday button)
+export async function getLiveGameCount(): Promise<number> {
+  try {
+    const { season, week } = await getNflState();
+    return (await getSchedule(season, week)).filter((g) => g.status === "in_game").length;
+  } catch {
+    return 0;
+  }
+}

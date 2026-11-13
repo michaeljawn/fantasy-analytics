@@ -15,9 +15,9 @@ export function Card({
   className?: string;
 }) {
   return (
-    <section className={`rounded-lg border border-line bg-surface ${className}`}>
+    <section className={`panel ${className}`}>
       {(title || action) && (
-        <header className="flex items-start justify-between gap-3 px-4 pt-4">
+        <header className="flex items-start justify-between gap-3 px-5 pt-5">
           <div>
             {title && <h2 className="chyron">{title}</h2>}
             {subtitle && <p className="mt-1 text-xs text-muted">{subtitle}</p>}
@@ -25,17 +25,17 @@ export function Card({
           {action}
         </header>
       )}
-      <div className="p-4">{children}</div>
+      <div className="p-5">{children}</div>
     </section>
   );
 }
 
 export function PageHeader({ title, description, children }: { title: string; description?: string; children?: React.ReactNode }) {
   return (
-    <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="text-3xl font-bold">{title}</h1>
-        {description && <p className="mt-1 max-w-2xl text-sm text-ink-2">{description}</p>}
+        <h1 className="text-4xl font-bold">{title}</h1>
+        {description && <p className="mt-2 max-w-2xl text-sm text-ink-2">{description}</p>}
       </div>
       {children}
     </div>
@@ -115,12 +115,12 @@ export function pct(n: number | null | undefined) {
 
 export function Segmented({ items }: { items: { href: string; label: string; active: boolean }[] }) {
   return (
-    <div className="flex flex-wrap rounded-md border border-line p-0.5 text-xs">
+    <div className="flex flex-wrap rounded-full border border-line bg-surface-2/40 p-0.5 text-xs">
       {items.map((i) => (
         <Link
           key={i.label}
           href={i.href}
-          className={`px-2.5 py-1 ${i.active ? "slant bg-accent font-semibold text-on-accent" : "rounded text-ink-2 hover:text-ink"}`}
+          className={`rounded-full px-3 py-1 transition-colors ${i.active ? "bg-accent font-semibold text-on-accent shadow-[0_0_14px_-4px_var(--accent-glow)]" : "text-ink-2 hover:text-ink"}`}
         >
           {i.label}
         </Link>

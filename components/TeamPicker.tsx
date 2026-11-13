@@ -27,7 +27,7 @@ export function TeamPicker({
       <select
         value={value ?? ""}
         onChange={(e) => select(e.target.value)}
-        className="max-w-56 rounded-md border border-line bg-surface px-2 py-1.5 text-sm text-ink"
+        className="max-w-56 cursor-pointer rounded-full border border-line bg-surface-2/50 px-3.5 py-1.5 text-sm text-ink transition-colors hover:border-accent/60 focus:border-accent focus:outline-none"
       >
         <option value="">Choose your team…</option>
         {teams

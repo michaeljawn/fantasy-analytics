@@ -15,7 +15,10 @@
   --muted: #6f7b91;
   --grid: #1b2540;
   --axis: #2c3854;
-  --border: rgba(160, 185, 230, 0.13);
+  --border: rgba(160, 185, 230, 0.1);
+  --surface-hi: #121b2d;
+  --edge: rgba(255, 255, 255, 0.05);
+  --grid-line: rgba(160, 185, 230, 0.045);
   --accent: #c6f432;
   --on-accent: #0a0f1a;
   --accent-glow: rgba(198, 244, 50, 0.35);
@@ -41,7 +44,10 @@
   --muted: #7a8499;
   --grid: #e2e6ee;
   --axis: #c4cad6;
-  --border: rgba(10, 17, 32, 0.11);
+  --border: rgba(10, 17, 32, 0.09);
+  --surface-hi: #ffffff;
+  --edge: rgba(255, 255, 255, 0.9);
+  --grid-line: rgba(10, 17, 32, 0.035);
   --accent: #4a7a00;
   --on-accent: #ffffff;
   --accent-glow: rgba(74, 122, 0, 0.25);
@@ -87,6 +93,136 @@ body {
     radial-gradient(ellipse 80% 420px at 50% -120px, rgba(76, 155, 255, 0.13), transparent 70%),
     var(--page);
   background-attachment: fixed;
+}
+
+/* Faint field grid under the top of every page, fading out */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 75% 55% at 50% 0%, #000 10%, transparent 75%);
+}
+
+/* Frosted top bar */
+.site-header {
+  background: color-mix(in oklab, var(--page) 72%, transparent);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 var(--edge) inset;
+}
+
+@layer components {
+  /* Cards: soft top-lit surface with a hairline highlight; utilities (border-accent etc.) still win */
+  .panel {
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--surface-hi), var(--surface) 140px);
+    box-shadow:
+      inset 0 1px 0 var(--edge),
+      0 20px 40px -32px var(--shadow);
+  }
+}
+
+/* Table rows light up under the cursor (not in the printed paper) */
+tbody tr:not(.paper *) {
+  transition: background-color 0.15s ease;
+}
+tbody tr:not(.paper *):hover {
+  background-color: color-mix(in oklab, var(--surface-2) 45%, transparent);
+}
+
+/* ──────────────────────────────────────────────
+   Navigation motion (components/Nav.tsx, components/Transitions.tsx)
+   ────────────────────────────────────────────── */
+
+/* Each page's sections rise in, one after another */
+.page-enter > * {
+  animation: page-in 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.page-enter > :nth-child(2) { animation-delay: 60ms; }
+.page-enter > :nth-child(3) { animation-delay: 120ms; }
+.page-enter > :nth-child(4) { animation-delay: 180ms; }
+.page-enter > :nth-child(5) { animation-delay: 240ms; }
+.page-enter > :nth-child(n + 6) { animation-delay: 300ms; }
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* The volt bar under the active nav item glides between items */
+.nav-indicator {
+  transition:
+    left 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+    width 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.2s ease;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* Loading bar across the top of the window */
+.nav-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  height: 2px;
+  width: 0;
+  opacity: 0;
+  background: linear-gradient(90deg, var(--series-1), var(--accent));
+  box-shadow: 0 0 10px var(--accent-glow);
+  pointer-events: none;
+}
+.nav-progress-loading {
+  opacity: 1;
+  animation: nav-progress 8s cubic-bezier(0.1, 0.6, 0.2, 1) forwards;
+}
+.nav-progress-done {
+  width: 100%;
+  opacity: 0;
+  transition:
+    width 0.2s ease,
+    opacity 0.3s ease 0.2s;
+}
+@keyframes nav-progress {
+  from { width: 0; }
+  to { width: 85%; }
+}
+
+/* Dropdowns pop in */
+.pop-in {
+  animation: pop-in 0.18s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transform-origin: top right;
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter > *,
+  .pop-in,
+  .nav-progress-loading {
+    animation: none;
+  }
+  .nav-indicator {
+    transition: none;
+  }
 }
 
 /* Page titles read like a broadcast graphic */
@@ -135,8 +271,8 @@ body {
 .chyron::before {
   content: "";
   flex: none;
-  width: 0.4rem;
-  height: 0.85rem;
+  width: 0.3rem;
+  height: 0.8rem;
   background: var(--accent);
   transform: skewX(-18deg);
 }

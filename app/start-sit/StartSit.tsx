@@ -67,7 +67,7 @@ export function StartSit({ players, initialIds }: { players: StartSitPlayer[]; i
           Add two or more players to compare them for this week.
         </div>
       ) : (
-        <section className="rounded-lg border border-line bg-surface">
+        <section className="panel">
           <div className="hidden grid-cols-[minmax(0,1.4fr)_minmax(0,2fr)_repeat(4,4.5rem)] gap-3 border-b border-line px-4 py-2 text-xs text-muted md:grid">
             <span>Player</span>
             <span>Score with floor–ceiling range</span>
