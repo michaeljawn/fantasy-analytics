@@ -19,7 +19,7 @@ The Front Office is a home base for a fantasy football league: standings, matchu
 | **League paper** | A weekly newspaper about your league, the same for everyone: a front-page story on the game of the week, recaps of every matchup, stars and duds, awards (high score, luckiest win, toughest loss), bench blunders, the transaction wire, standings movement, and previews of next week with projections in your league's scoring |
 | **Trending** | Most added/dropped players across Sleeper leagues (24h / 3d / 7d), form risers and fallers (last 3 games vs. season), snap share risers, and buy-low / sell-high players where the market and our model disagree |
 | **Rankings** | Rest-of-season outlook with tiers, VOR, and trade value, or full season stats (2014–present) with floor, ceiling, boom/bust rates, and snap share |
-| **Player profiles** | Weekly points chart with upcoming projections, game log, season-by-season history, and next matchup rating |
+| **Player profiles** | Position finish next to the name (e.g. WR1, by total points in your scoring; per-game rank alongside), weekly points chart with upcoming projections, game log, season-by-season history, and next matchup rating |
 | **Start/Sit** | Compare up to 6 players for the upcoming week using projection, recent form, and opponent strength vs. the position |
 | **Trade calculator** | Redraft or Dynasty mode. Value both sides of a trade with league size and Superflex settings, a package discount for multi-player deals, and suggestions to balance uneven trades. Dynasty mode adds rookie picks (Early / Mid / Late, rounds 1–4, next three drafts). |
 | **Matchups** | Heatmap of fantasy points each defense allows to QB / RB / WR / TE vs. league average |
