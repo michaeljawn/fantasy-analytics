@@ -76,7 +76,7 @@ export function PlayerSearch() {
                 className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm ${i === active ? "bg-surface-2" : ""}`}
               >
                 <span className="flex min-w-0 items-center gap-2">
-                  <PlayerAvatar id={p.player_id} name={p.name} />
+                  <PlayerAvatar id={p.player_id} name={p.name} team={p.team} />
                   <span className="truncate">{p.name}</span>
                 </span>
                 <span className="text-xs text-muted">

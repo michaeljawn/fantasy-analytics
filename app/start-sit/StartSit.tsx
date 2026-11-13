@@ -94,7 +94,7 @@ export function StartSit({ players, initialIds }: { players: StartSitPlayer[]; i
                     </span>
                     <PosBadge position={p.position} />
                     <span className="flex min-w-0 overflow-hidden text-sm">
-                      <PlayerLink id={p.id} name={p.name} />
+                      <PlayerLink id={p.id} name={p.name} team={p.team} />
                     </span>
                     <span className="shrink-0 text-xs text-muted">{p.opponent ? `vs ${p.opponent}` : "no game"}</span>
                     <InjuryTag status={p.injury} />

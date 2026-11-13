@@ -2,23 +2,28 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { teamGradient } from "@/lib/nfl-colors";
 
 // Team defenses use the team code as their player ID (e.g. "KC")
 const isTeamDefense = (id: string) => /^[A-Z]{2,3}$/.test(id);
 
-// Sleeper headshot (or team logo for a defense), falling back to initials when there's no photo
+// Sleeper headshot (or team logo for a defense) over the team's colors, falling back to initials.
+// Headshots are transparent, so the team gradient shows behind the player.
 export function PlayerAvatar({
   id,
   name,
+  team,
   size = 24,
   background = "bg-surface-2 text-ink-2",
 }: {
   id: string;
   name: string;
+  team?: string | null;
   size?: number;
   background?: string;
 }) {
   const [failed, setFailed] = useState(false);
+  const gradient = teamGradient(isTeamDefense(id) ? null : team);
   const initials = name
     .split(" ")
     .filter(Boolean)
@@ -28,8 +33,8 @@ export function PlayerAvatar({
 
   return (
     <span
-      className={`relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full ${background}`}
-      style={{ width: size, height: size, fontSize: Math.max(size * 0.36, 9) }}
+      className={`relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full ${gradient ? "text-white" : background}`}
+      style={{ width: size, height: size, fontSize: Math.max(size * 0.36, 9), background: gradient }}
       aria-hidden
     >
       {failed ? (

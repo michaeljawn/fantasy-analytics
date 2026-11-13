@@ -23,8 +23,8 @@ export function Nav() {
           <Link
             key={l.href}
             href={l.href}
-            className={`rounded-md px-2.5 py-1.5 whitespace-nowrap ${
-              active ? "bg-surface-2 font-medium text-ink" : "text-ink-2 hover:text-ink"
+            className={`px-3 py-1.5 font-display text-[15px] font-semibold tracking-wide whitespace-nowrap uppercase ${
+              active ? "slant bg-accent text-on-accent" : "rounded-md text-ink-2 hover:bg-surface-2 hover:text-ink"
             }`}
           >
             {l.label}

@@ -182,7 +182,7 @@ export function TradeCalculator({
                       </>
                     ) : (
                       <>
-                        <PlayerLink id={asset.id} name={asset.name} />
+                        <PlayerLink id={asset.id} name={asset.name} team={asset.team} />
                         <span className="hidden shrink-0 text-xs text-muted sm:inline">
                           {asset.team ?? "FA"} · {asset.position}
                           {asset.posRank}

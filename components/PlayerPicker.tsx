@@ -77,7 +77,7 @@ export function PlayerPicker<T extends PickablePlayer>({
                       PK
                     </span>
                   ) : (
-                    <PlayerAvatar id={p.id} name={p.name} />
+                    <PlayerAvatar id={p.id} name={p.name} team={p.team} />
                   )}
                   <span className="truncate">{p.name}</span>
                   <span className="shrink-0 text-xs text-muted">{p.kind === "pick" ? "Rookie pick" : `${p.position} · ${p.team ?? "FA"}`}</span>

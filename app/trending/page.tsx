@@ -142,7 +142,7 @@ function WaiverTable({ entries, summaries }: { entries: TrendingEntry[]; summari
                 <td className="px-4 py-2">
                   <div className="flex items-center gap-2">
                     <PosBadge position={s.position} />
-                    <PlayerLink id={s.player_id} name={s.name} />
+                    <PlayerLink id={s.player_id} name={s.name} team={s.team} />
                     <span className="text-xs text-muted">{s.team ?? "FA"}</span>
                     <InjuryTag status={s.injury_status} />
                   </div>
@@ -186,7 +186,7 @@ function FormTable({ rows }: { rows: FormRow[] }) {
               <td className="px-4 py-2">
                 <div className="flex items-center gap-2">
                   <PosBadge position={r.position} />
-                  <PlayerLink id={r.player_id} name={r.name} />
+                  <PlayerLink id={r.player_id} name={r.name} team={r.team} />
                   <span className="text-xs text-muted">{r.team ?? "FA"}</span>
                 </div>
               </td>
@@ -226,7 +226,7 @@ function UsageTable({ rows }: { rows: FormRow[] }) {
               <td className="px-4 py-2">
                 <div className="flex items-center gap-2">
                   <PosBadge position={r.position} />
-                  <PlayerLink id={r.player_id} name={r.name} />
+                  <PlayerLink id={r.player_id} name={r.name} team={r.team} />
                   <span className="text-xs text-muted">{r.team ?? "FA"}</span>
                 </div>
               </td>
@@ -263,7 +263,7 @@ function SignalTable({ rows }: { rows: ValuedPlayer[] }) {
               <td className="px-4 py-2">
                 <div className="flex items-center gap-2">
                   <PosBadge position={r.position} />
-                  <PlayerLink id={r.playerId} name={r.name} />
+                  <PlayerLink id={r.playerId} name={r.name} team={r.team} />
                   <span className="text-xs text-muted">
                     {r.team ?? "FA"}
                     {r.age ? ` · ${r.age}` : ""}

@@ -18,6 +18,7 @@ import {
   type RosterPlayer,
   type Team,
 } from "@/lib/league";
+import { managerColor } from "@/lib/manager-color";
 import { safeLoad } from "@/lib/safe";
 
 export default async function LeaguePage({ searchParams }: { searchParams: Promise<{ week?: string }> }) {
@@ -114,7 +115,7 @@ function TeamName({ team, size = 24 }: { team: Team | undefined; size?: number }
   if (!team) return <span className="text-muted">Unknown team</span>;
   return (
     <span className="flex min-w-0 items-center gap-2">
-      <TeamAvatar url={team.avatar_url} name={team.team_name} size={size} />
+      <TeamAvatar url={team.avatar_url} name={team.team_name} size={size} colorKey={team.owner_id} />
       <span className="min-w-0">
         <span className="block truncate font-medium">{team.team_name}</span>
         <span className="block truncate text-xs text-muted">{team.display_name}</span>
@@ -148,7 +149,12 @@ function Standings({ teams, playoffTeams, myRosterId }: { teams: Team[]; playoff
                 t.roster_id === myRosterId ? "bg-surface-2" : ""
               }`}
             >
-              <td className="tabular px-4 py-2 text-muted">{i + 1}</td>
+              <td className="px-4 py-2">
+                <span className="flex items-center gap-2.5">
+                  <span aria-hidden className="h-5 w-1 -skew-x-12" style={{ background: managerColor(t.owner_id) }} />
+                  <span className="score text-lg text-ink-2">{i + 1}</span>
+                </span>
+              </td>
               <td className="max-w-0 py-2">
                 <TeamName team={t} />
               </td>
@@ -238,7 +244,7 @@ function Roster({ players, slots }: { players: RosterPlayer[]; slots: string[] }
                   )}
                   <PosBadge position={p.position ?? "?"} />
                   <span className="flex min-w-0 overflow-hidden">
-                    <PlayerLink id={p.player_id} name={p.name} position={p.position} />
+                    <PlayerLink id={p.player_id} name={p.name} position={p.position} team={p.team} />
                   </span>
                   <span className="shrink-0 text-xs text-muted">{p.team ?? "FA"}</span>
                   <InjuryTag status={p.injury_status} />
@@ -259,7 +265,7 @@ function NoLeague() {
       <p className="mt-2 text-sm text-ink-2">Add your Sleeper league by username or league ID.</p>
       <Link
         href="/leagues"
-        className="mt-4 inline-block rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white hover:brightness-110"
+        className="mt-4 inline-block rounded-md bg-accent px-4 py-2 text-sm font-semibold text-on-accent hover:brightness-110"
       >
         Add a league
       </Link>

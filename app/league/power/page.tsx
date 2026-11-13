@@ -4,6 +4,7 @@ import { TeamAvatar } from "@/components/TeamAvatar";
 import { Card, Empty, PlayerLink, PosBadge } from "@/components/ui";
 import { FORMATS, type Position } from "@/lib/formats";
 import { getLeague, getLeagueId, getMyUserId, getSwitcherLeagues, getTeams, type Team } from "@/lib/league";
+import { managerColor } from "@/lib/manager-color";
 import { getPowerRankings, type PowerTeam } from "@/lib/power";
 import { safeLoad } from "@/lib/safe";
 
@@ -86,7 +87,12 @@ export default async function PowerRankingsPage() {
                     key={t.team.roster_id}
                     className={`border-b border-line/60 ${t.team.owner_id === myUserId ? "bg-surface-2" : ""}`}
                   >
-                    <td className="tabular px-4 py-2.5 font-semibold">{t.rank}</td>
+                    <td className="px-4 py-2.5">
+                      <span className="flex items-center gap-2.5">
+                        <span aria-hidden className="h-5 w-1 -skew-x-12" style={{ background: managerColor(t.team.owner_id) }} />
+                        <span className="score text-xl">{t.rank}</span>
+                      </span>
+                    </td>
                     <td className="max-w-0 py-2.5 pr-3">
                       <TeamName team={t.team} label={t.label} />
                     </td>
@@ -120,7 +126,7 @@ export default async function PowerRankingsPage() {
         </Card>
 
         <div>
-          <h2 className="mb-3 text-sm font-semibold">Team builds</h2>
+          <h2 className="chyron mb-3">Team builds</h2>
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {power.teams.map((t) => (
               <BuildCard key={t.team.roster_id} team={t} n={n} dynasty={power.dynasty} mine={t.team.owner_id === myUserId} />
@@ -146,7 +152,7 @@ function BuildCard({ team: t, n, dynasty, mine }: { team: PowerTeam; n: number; 
   return (
     <section className={`rounded-lg border bg-surface p-4 ${mine ? "border-accent" : "border-line"}`}>
       <div className="flex items-start gap-3">
-        <span className="tabular w-6 shrink-0 pt-0.5 text-lg font-semibold">{t.rank}</span>
+        <span className="score w-7 shrink-0 text-3xl leading-none text-accent italic">{t.rank}</span>
         <div className="min-w-0 flex-1">
           <TeamName team={t.team} label={t.label} />
         </div>
@@ -170,7 +176,7 @@ function BuildCard({ team: t, n, dynasty, mine }: { team: PowerTeam; n: number; 
           <li key={p.playerId} className="flex min-w-0 items-center gap-2 text-sm">
             <PosBadge position={p.position} />
             <span className="flex min-w-0 flex-1 overflow-hidden">
-              <PlayerLink id={p.playerId} name={p.name} />
+              <PlayerLink id={p.playerId} name={p.name} team={p.team} />
             </span>
             <span className="tabular shrink-0 text-xs text-muted">{p.ppg.toFixed(1)}/wk</span>
           </li>
@@ -193,7 +199,7 @@ function Stat({ label, value, rank }: { label: string; value: string; rank: numb
 function TeamName({ team, label }: { team: Team; label: string }) {
   return (
     <span className="flex min-w-0 items-center gap-2">
-      <TeamAvatar url={team.avatar_url} name={team.team_name} size={24} />
+      <TeamAvatar url={team.avatar_url} name={team.team_name} size={24} colorKey={team.owner_id} />
       <span className="min-w-0">
         <span className="block truncate font-medium">{team.team_name}</span>
         <span className="block truncate text-xs text-muted">
