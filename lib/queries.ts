@@ -131,12 +131,27 @@ export async function getGameLog(playerId: string, format: Format) {
   );
 }
 
+// Each of a player's seasons, with where he finished at his position: by total points
+// (the usual "WR1"), and by points per game among players who played at least half as
+// many games as the position's most-played (so a one-game wonder doesn't rank first)
 export async function getPlayerSeasons(playerId: string, format: Format) {
-  return query<SeasonRow & { season: number }>(
-    `SELECT s.*, '' AS name, NULL AS team, NULL AS injury_status
-		FROM v_season_summary s
-		WHERE s.player_id = $1 AND s.format = $2
-		ORDER BY s.season DESC`,
+  return query<SeasonRow & { season: number; pos_rank: number; ppg_rank: number | null }>(
+    `WITH seasons AS (
+			SELECT s.*, s.games * 2 >= MAX(s.games) OVER (PARTITION BY s.season, s.position) AS qualifies
+			FROM v_season_summary s
+			WHERE s.format = $2 AND s.season IN (SELECT DISTINCT season FROM weekly_stats WHERE player_id = $1)
+		), ranked AS (
+			SELECT s.*,
+				RANK() OVER (PARTITION BY s.season, s.position ORDER BY s.total_points DESC)::int AS pos_rank,
+				CASE WHEN s.qualifies THEN
+					RANK() OVER (PARTITION BY s.season, s.position, s.qualifies ORDER BY s.avg_points DESC)::int
+				END AS ppg_rank
+			FROM seasons s
+		)
+		SELECT r.*, '' AS name, NULL AS team, NULL AS injury_status
+		FROM ranked r
+		WHERE r.player_id = $1
+		ORDER BY r.season DESC`,
     [playerId, format],
   );
 }

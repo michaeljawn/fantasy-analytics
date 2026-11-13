@@ -5,6 +5,7 @@ import { PlayerAvatar } from "@/components/PlayerAvatar";
 import { SetupNotice } from "@/components/SetupNotice";
 import { Card, InjuryTag, PosBadge, Segmented, SignalTag, fmt, pct } from "@/components/ui";
 import { getFormat } from "@/lib/format";
+import type { Format } from "@/lib/formats";
 import { DEFAULT_LEAGUE } from "@/lib/model";
 import { getBothValues, type ValuedPlayer } from "@/lib/values";
 import {
@@ -95,9 +96,26 @@ export default async function PlayerPage({
               {player.years_exp != null && <span>· {player.years_exp === 0 ? "Rookie" : `Year ${player.years_exp + 1}`}</span>}
               <InjuryTag status={player.injury_status} />
             </div>
-            <h1 className="mt-1 text-4xl font-bold">
-              {player.first_name} {player.last_name}
-            </h1>
+            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <h1 className="text-4xl font-bold">
+                {player.first_name} {player.last_name}
+              </h1>
+              {summary && (
+                <span
+                  className="slant bg-accent px-3 py-0.5 font-display text-2xl font-extrabold text-on-accent italic"
+                  title={`${season} finish by total ${FORMAT_NAME[format]} points`}
+                >
+                  {player.position}
+                  {summary.pos_rank}
+                </span>
+              )}
+            </div>
+            {summary && (
+              <p className="mt-1 text-xs text-muted">
+                {season === ctx.season ? `${season} so far` : `${season} finish`} · {FORMAT_NAME[format]}
+                {summary.ppg_rank != null && summary.ppg_rank !== summary.pos_rank && ` · ${player.position}${summary.ppg_rank} per game`}
+              </p>
+            )}
           </div>
         </div>
         {seasonList.length > 1 && (
@@ -161,6 +179,7 @@ export default async function PlayerPage({
             <thead className="text-left text-xs text-muted">
               <tr>
                 <th className="pb-2 font-normal">Season</th>
+                <th className="pb-2 text-right font-normal">Finish</th>
                 <th className="pb-2 text-right font-normal">GP</th>
                 <th className="pb-2 text-right font-normal">Avg</th>
                 <th className="pb-2 text-right font-normal">Total</th>
@@ -174,6 +193,12 @@ export default async function PlayerPage({
                     <Link href={`/players/${id}?season=${s.season}`} className="hover:text-accent hover:underline">
                       {s.season}
                     </Link>
+                  </td>
+                  <td className="py-2 text-right">
+                    <span className={`score ${s.pos_rank <= 12 ? "text-accent" : "text-ink-2"}`}>
+                      {player.position}
+                      {s.pos_rank}
+                    </span>
                   </td>
                   <td className="tabular py-2 text-right">{s.games}</td>
                   <td className="tabular py-2 text-right">{fmt(s.avg_points)}</td>
@@ -214,6 +239,8 @@ function Stat({ label, value, note, small }: { label: string; value: string; not
     </div>
   );
 }
+
+const FORMAT_NAME: Record<Format, string> = { ppr: "PPR", half: "Half PPR", std: "Standard" };
 
 function matchupLabel(factor: number) {
   if (factor >= 1.15) return "Great";
