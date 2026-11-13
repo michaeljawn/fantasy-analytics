@@ -346,6 +346,88 @@ body {
 }
 
 /* ──────────────────────────────────────────────
+   Gameday scoreboard motion (components/gameday/Motion.tsx)
+   ────────────────────────────────────────────── */
+
+/* A number that just went up */
+.flash-up {
+  animation: flash-up 1.6s ease-out;
+}
+@keyframes flash-up {
+  0%,
+  25% {
+    color: var(--good);
+    text-shadow: 0 0 14px color-mix(in oklab, var(--good) 70%, transparent);
+  }
+}
+
+.flash-bad {
+  --good: var(--critical);
+}
+
+/* Row wash behind a big play; --flash is green for you, red against you */
+.row-flash {
+  animation: row-flash 2.6s ease-out forwards;
+}
+@keyframes row-flash {
+  0% {
+    background: color-mix(in oklab, var(--flash) 32%, transparent);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+/* Confetti bars flying out of the player's photo */
+.burst-bar {
+  position: absolute;
+  width: 5px;
+  height: 14px;
+  transform: translate(-50%, -50%) rotate(var(--a)) translateY(-12px) skewX(-18deg);
+  animation: burst 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+@keyframes burst {
+  to {
+    transform: translate(-50%, -50%) rotate(var(--a)) translateY(calc(-1 * var(--d))) skewX(-18deg);
+    opacity: 0;
+  }
+}
+
+/* The "Touchdown +6.8" chyron that slides over the row */
+.play-badge {
+  animation: play-badge 3.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+@keyframes play-badge {
+  0% {
+    opacity: 0;
+    translate: -16px 0;
+  }
+  8%,
+  85% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  100% {
+    opacity: 0;
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flash-up,
+  .row-flash,
+  .burst-bar {
+    animation: none;
+  }
+  .burst-bar {
+    display: none;
+  }
+  .play-badge {
+    animation: none;
+  }
+}
+
+/* ──────────────────────────────────────────────
    League newspaper (black ink on white, in both themes)
    ────────────────────────────────────────────── */
 
