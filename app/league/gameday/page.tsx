@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AutoRefresh, LocalTime } from "@/components/gameday/Live";
+import { LiveNumber, PlayRow } from "@/components/gameday/Motion";
 import { LeagueTabs } from "@/components/leagues/LeagueHeader";
 import { PlayerAvatar } from "@/components/PlayerAvatar";
 import { SetupNotice } from "@/components/SetupNotice";
@@ -113,9 +114,9 @@ function MatchupCard({ matchup: m }: { matchup: LeagueMatchup }) {
       </div>
       <div className="grid grid-cols-[1fr_auto] items-center gap-x-3 px-3 pt-2">
         <span className="truncate font-semibold">{m.me.teamName}</span>
-        <span className="score text-right text-2xl">{m.me.points.toFixed(2)}</span>
+        <LiveNumber value={m.me.points} digits={2} className="score text-right text-2xl" />
         <span className="truncate text-sm text-ink-2">{m.opponent?.teamName ?? "No opponent this week"}</span>
-        <span className="score text-right text-2xl text-ink-2">{m.opponent ? m.opponent.points.toFixed(2) : ""}</span>
+        {m.opponent ? <LiveNumber value={m.opponent.points} digits={2} bad className="score text-right text-2xl text-ink-2" /> : <span />}
       </div>
       <div className="px-3 pb-3">
         {m.opponent && (
@@ -148,7 +149,7 @@ function TeamChip({ team, score, won }: { team: string; score: number | null; wo
       <span className="slant px-2 py-0.5 font-display text-sm font-bold text-white" style={{ background: c?.[0] ?? "var(--surface-2)" }}>
         {team}
       </span>
-      {score != null && <span className={`score text-xl ${won ? "" : "text-ink-2"}`}>{score}</span>}
+      {score != null && <LiveNumber value={score} digits={0} className={`score text-xl ${won ? "" : "text-ink-2"}`} />}
     </span>
   );
 }
@@ -192,7 +193,7 @@ function GameCard({ game }: { game: GamedayGame }) {
               Your starters
               <span className="font-normal">{game.status === "complete" ? "pts" : "pts / proj"}</span>
             </h3>
-            <PlayerList players={game.mine} showProjection={game.status !== "complete"} />
+            <PlayerList players={game.mine} game={game} showProjection={game.status !== "complete"} />
           </>
         ) : (
           <p className="text-sm text-muted">None of your starters in this one.</p>
@@ -200,7 +201,7 @@ function GameCard({ game }: { game: GamedayGame }) {
         {game.against.length > 0 && (
           <>
             <h3 className="mt-4 mb-1 text-xs font-medium text-muted">Against you</h3>
-            <PlayerList players={game.against} showProjection={game.status !== "complete"} muted />
+            <PlayerList players={game.against} game={game} showProjection={game.status !== "complete"} muted />
           </>
         )}
       </div>
@@ -208,11 +209,28 @@ function GameCard({ game }: { game: GamedayGame }) {
   );
 }
 
-function PlayerList({ players, showProjection, muted }: { players: GamedayPlayer[]; showProjection: boolean; muted?: boolean }) {
+function PlayerList({
+  players,
+  game,
+  showProjection,
+  muted,
+}: {
+  players: GamedayPlayer[];
+  game?: GamedayGame;
+  showProjection: boolean;
+  muted?: boolean;
+}) {
   return (
     <ul className="divide-y divide-line/60">
       {players.map((p) => (
-        <li key={p.playerId} className={`flex items-start gap-3 py-2 ${muted ? "opacity-80" : ""}`}>
+        <PlayRow
+          key={p.playerId}
+          points={Math.max(...p.leagues.map((l) => l.points))}
+          teamScore={game ? (p.team === game.home ? game.homeScore : game.awayScore) : null}
+          against={muted}
+          colors={p.team ? NFL_COLORS[p.team] : undefined}
+          className={`flex items-start gap-3 py-2 ${muted ? "opacity-80" : ""}`}
+        >
           <PlayerAvatar id={p.playerId} name={p.name} team={p.team} size={32} />
           <div className="min-w-0 flex-1">
             <p className="flex min-w-0 items-center gap-2 text-sm">
@@ -229,14 +247,14 @@ function PlayerList({ players, showProjection, muted }: { players: GamedayPlayer
             {p.leagues.map((l) => (
               <li key={l.leagueId} className="flex items-center justify-end gap-2">
                 <span className="max-w-32 truncate text-muted">{l.leagueName}</span>
-                <span className="tabular w-10 font-semibold text-ink">{l.points.toFixed(1)}</span>
+                <LiveNumber value={l.points} bad={muted} className="tabular w-10 font-semibold text-ink" />
                 {showProjection && (
                   <span className="tabular w-12 text-muted">{l.projected != null ? `/ ${l.projected.toFixed(1)}` : ""}</span>
                 )}
               </li>
             ))}
           </ul>
-        </li>
+        </PlayRow>
       ))}
     </ul>
   );
