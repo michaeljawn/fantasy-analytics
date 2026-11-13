@@ -6,6 +6,7 @@ import { SetupNotice } from "@/components/SetupNotice";
 import { TeamAvatar } from "@/components/TeamAvatar";
 import { Card, Empty, InjuryTag, PosBadge, Segmented } from "@/components/ui";
 import { getGameday, type GamedayGame, type GamedayPlayer, type LeagueMatchup } from "@/lib/gameday";
+import { NFL_COLORS } from "@/lib/nfl-colors";
 import { safeLoad } from "@/lib/safe";
 
 export const metadata = { title: "Gameday" };
@@ -22,7 +23,7 @@ export default async function GamedayPage({ searchParams }: { searchParams: Prom
         {g.season} season · Week {g.week}
         {g.leagueCount > 0 && ` · ${g.leagueCount} ${g.leagueCount === 1 ? "league" : "leagues"}`}
       </p>
-      <h1 className="text-xl font-semibold tracking-tight">Your gameday</h1>
+      <h1 className="text-3xl font-bold">Your gameday</h1>
       <LeagueTabs tab="gameday" />
     </div>
   );
@@ -103,51 +104,77 @@ export default async function GamedayPage({ searchParams }: { searchParams: Prom
 
 function MatchupCard({ matchup: m }: { matchup: LeagueMatchup }) {
   const ahead = m.opponent ? m.me.projected >= m.opponent.projected : true;
+  const share = m.opponent ? m.me.projected / Math.max(m.me.projected + m.opponent.projected, 1) : 1;
   return (
-    <section className="rounded-lg border border-line bg-surface p-3">
-      <div className="flex items-center gap-2 text-xs text-ink-2">
+    <section className="overflow-hidden rounded-lg border border-line bg-surface">
+      <div className="slant-r flex items-center gap-2 bg-surface-2 py-1.5 pr-6 pl-3 text-xs text-ink-2">
         <TeamAvatar url={m.avatar} name={m.leagueName} size={18} />
-        <span className="truncate">{m.leagueName}</span>
+        <span className="truncate font-display font-semibold tracking-wide uppercase">{m.leagueName}</span>
       </div>
-      <div className="mt-2 grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 text-sm">
+      <div className="grid grid-cols-[1fr_auto] items-center gap-x-3 px-3 pt-2">
         <span className="truncate font-semibold">{m.me.teamName}</span>
-        <span className="tabular text-right font-semibold">{m.me.points.toFixed(2)}</span>
-        <span className="truncate text-ink-2">{m.opponent?.teamName ?? "No opponent this week"}</span>
-        <span className="tabular text-right text-ink-2">{m.opponent ? m.opponent.points.toFixed(2) : ""}</span>
+        <span className="score text-right text-2xl">{m.me.points.toFixed(2)}</span>
+        <span className="truncate text-sm text-ink-2">{m.opponent?.teamName ?? "No opponent this week"}</span>
+        <span className="score text-right text-2xl text-ink-2">{m.opponent ? m.opponent.points.toFixed(2) : ""}</span>
       </div>
-      {m.opponent && (
-        <p className="mt-2 text-xs text-muted">
-          Projected{" "}
-          <span className={`tabular font-medium ${ahead ? "text-good" : "text-critical"}`}>
-            {m.me.projected.toFixed(1)}–{m.opponent.projected.toFixed(1)}
-          </span>
-        </p>
-      )}
-      {m.warnings.map((w) => (
-        <p key={w} className="mt-1 text-xs font-medium text-critical">
-          ⚠ {w}
-        </p>
-      ))}
+      <div className="px-3 pb-3">
+        {m.opponent && (
+          <>
+            <div className="mt-2 flex h-1.5 overflow-hidden rounded-full bg-critical/70" aria-hidden>
+              <div className="bg-good transition-[width] duration-700" style={{ width: `${share * 100}%` }} />
+            </div>
+            <p className="mt-1.5 text-xs text-muted">
+              Projected{" "}
+              <span className={`tabular font-semibold ${ahead ? "text-good" : "text-critical"}`}>
+                {m.me.projected.toFixed(1)}–{m.opponent.projected.toFixed(1)}
+              </span>
+            </p>
+          </>
+        )}
+        {m.warnings.map((w) => (
+          <p key={w} className="mt-1 text-xs font-medium text-critical">
+            ⚠ {w}
+          </p>
+        ))}
+      </div>
     </section>
   );
 }
 
-function GameCard({ game }: { game: GamedayGame }) {
+function TeamChip({ team, score, won }: { team: string; score: number | null; won: boolean }) {
+  const c = NFL_COLORS[team];
   return (
-    <section className={`rounded-lg border bg-surface ${game.status === "in_game" ? "border-accent" : "border-line"}`}>
+    <span className="flex items-center gap-1.5">
+      <span className="slant px-2 py-0.5 font-display text-sm font-bold text-white" style={{ background: c?.[0] ?? "var(--surface-2)" }}>
+        {team}
+      </span>
+      {score != null && <span className={`score text-xl ${won ? "" : "text-ink-2"}`}>{score}</span>}
+    </span>
+  );
+}
+
+function GameCard({ game }: { game: GamedayGame }) {
+  const awayWon = game.status === "complete" ? (game.awayScore ?? 0) > (game.homeScore ?? 0) : true;
+  const homeWon = game.status === "complete" ? (game.homeScore ?? 0) > (game.awayScore ?? 0) : true;
+  return (
+    <section
+      className={`rounded-lg border bg-surface ${game.status === "in_game" ? "border-accent shadow-[0_0_24px_-8px_var(--accent-glow)]" : "border-line"}`}
+    >
       <header className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
-        <div className="flex items-center gap-2 text-sm font-semibold">
-          <span>{game.away}</span>
-          {game.awayScore != null && <span className="tabular">{game.awayScore}</span>}
-          <span className="font-normal text-muted">@</span>
-          <span>{game.home}</span>
-          {game.homeScore != null && <span className="tabular">{game.homeScore}</span>}
+        <div className="flex items-center gap-2">
+          <TeamChip team={game.away} score={game.awayScore} won={awayWon} />
+          <span className="text-xs text-muted">@</span>
+          <TeamChip team={game.home} score={game.homeScore} won={homeWon} />
         </div>
         <span className="text-xs text-ink-2">
           {game.status === "complete" ? (
-            "Final"
+            <span className="font-display font-semibold tracking-wide uppercase">Final</span>
           ) : game.status === "in_game" ? (
-            <span className="font-semibold text-accent">
+            <span className="inline-flex items-center gap-1.5 font-display text-sm font-bold text-accent uppercase">
+              <span className="relative flex size-2">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-60 motion-reduce:hidden" />
+                <span className="relative inline-flex size-2 rounded-full bg-accent" />
+              </span>
               {game.quarter ? `Q${game.quarter}` : "Live"} {game.clock ?? ""}
             </span>
           ) : (
@@ -186,7 +213,7 @@ function PlayerList({ players, showProjection, muted }: { players: GamedayPlayer
     <ul className="divide-y divide-line/60">
       {players.map((p) => (
         <li key={p.playerId} className={`flex items-start gap-3 py-2 ${muted ? "opacity-80" : ""}`}>
-          <PlayerAvatar id={p.playerId} name={p.name} size={32} />
+          <PlayerAvatar id={p.playerId} name={p.name} team={p.team} size={32} />
           <div className="min-w-0 flex-1">
             <p className="flex min-w-0 items-center gap-2 text-sm">
               <span className="truncate font-medium">{p.name}</span>

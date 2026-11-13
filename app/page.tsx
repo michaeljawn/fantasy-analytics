@@ -44,7 +44,7 @@ function Hero({ data }: { data: LandingData | null }) {
               Live · {data.season} season, week {data.week}
             </p>
           )}
-          <h1 className="rise mt-5 text-4xl leading-[1.05] font-semibold tracking-tight sm:text-6xl" style={{ "--i": 1 } as React.CSSProperties}>
+          <h1 className="rise mt-5 text-5xl leading-[0.95] font-bold sm:text-7xl" style={{ "--i": 1 } as React.CSSProperties}>
             Fantasy analytics that <span className="text-gradient">show their work.</span>
           </h1>
           <p className="rise mt-5 max-w-xl text-base text-ink-2 sm:text-lg" style={{ "--i": 2 } as React.CSSProperties}>
@@ -54,7 +54,7 @@ function Hero({ data }: { data: LandingData | null }) {
           <div className="rise mt-8 flex flex-wrap gap-3" style={{ "--i": 3 } as React.CSSProperties}>
             <Link
               href="/overview"
-              className="group inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/25 transition hover:brightness-110"
+              className="group inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-3 text-sm font-semibold text-on-accent shadow-lg shadow-accent/25 transition hover:brightness-110"
             >
               Open the dashboard
               <span className="transition-transform group-hover:translate-x-1" aria-hidden>
@@ -80,7 +80,7 @@ function Hero({ data }: { data: LandingData | null }) {
           )}
           {data?.buyLow && (
             <div className="float absolute -top-4 right-2 hidden items-center gap-2 rounded-lg border border-line bg-surface/95 px-3 py-2 text-xs shadow-xl backdrop-blur sm:flex" style={{ "--i": 1 } as React.CSSProperties}>
-              <PlayerAvatar id={data.buyLow.playerId} name={data.buyLow.name} size={22} />
+              <PlayerAvatar id={data.buyLow.playerId} name={data.buyLow.name} team={data.buyLow.team} size={22} />
               <span className="font-semibold">{data.buyLow.name}</span>
               <span className="font-semibold" style={{ color: "var(--good)" }}>
                 ↗ Buy low
@@ -112,7 +112,7 @@ function HeroChart({ player }: { player: NonNullable<LandingData["hotPlayer"]> }
     <div className="rounded-2xl border border-line bg-surface/90 p-5 shadow-2xl shadow-black/10 backdrop-blur">
       <div className="flex items-center justify-between gap-3">
         <Link href={`/players/${player.id}`} className="flex items-center gap-3 hover:text-accent">
-          <PlayerAvatar id={player.id} name={player.name} size={40} />
+          <PlayerAvatar id={player.id} name={player.name} team={player.team} size={40} />
           <div>
             <div className="text-xs text-muted">Hottest player right now</div>
             <div className="font-semibold">
@@ -179,7 +179,7 @@ function TrendingRibbon({ players }: { players: LandingData["trending"] }) {
                 tabIndex={i >= players.length ? -1 : undefined}
                 className="flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-sm whitespace-nowrap transition hover:border-accent"
               >
-                <PlayerAvatar id={p.id} name={p.name} size={22} />
+                <PlayerAvatar id={p.id} name={p.name} team={p.team} size={22} />
                 <span className="font-medium">{p.name}</span>
                 <span className="text-xs text-muted">{p.position}</span>
                 <span className="tabular text-xs" style={{ color: "var(--good)" }}>
@@ -328,7 +328,7 @@ function MarketSpotlight({ data }: { data: LandingData }) {
           <Reveal key={label} className="reveal-self">
             <Link href={`/players/${p!.playerId}`} className="lift block rounded-xl border border-line bg-surface p-5" style={{ "--i": i } as React.CSSProperties}>
               <div className="flex items-center gap-3">
-                <PlayerAvatar id={p!.playerId} name={p!.name} size={44} />
+                <PlayerAvatar id={p!.playerId} name={p!.name} team={p!.team} size={44} />
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <PosBadge position={p!.position} />
@@ -458,7 +458,7 @@ function FinalCta() {
         <p className="mx-auto mt-3 max-w-lg text-ink-2">Built on open NFL data from Sleeper, plus live trade-market values.</p>
         <Link
           href="/overview"
-          className="group mt-8 inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/25 transition hover:brightness-110"
+          className="group mt-8 inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 text-sm font-semibold text-on-accent shadow-lg shadow-accent/25 transition hover:brightness-110"
         >
           Open the dashboard
           <span className="transition-transform group-hover:translate-x-1" aria-hidden>

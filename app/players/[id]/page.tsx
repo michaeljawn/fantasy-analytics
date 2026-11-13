@@ -86,7 +86,7 @@ export default async function PlayerPage({
     <>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div className="flex items-center gap-4">
-          <PlayerAvatar id={player.player_id} name={`${player.first_name} ${player.last_name}`} size={72} />
+          <PlayerAvatar id={player.player_id} name={`${player.first_name} ${player.last_name}`} team={player.team} size={72} />
           <div>
             <div className="flex items-center gap-2 text-sm text-ink-2">
               <PosBadge position={player.position} />
@@ -95,7 +95,7 @@ export default async function PlayerPage({
               {player.years_exp != null && <span>· {player.years_exp === 0 ? "Rookie" : `Year ${player.years_exp + 1}`}</span>}
               <InjuryTag status={player.injury_status} />
             </div>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight">
+            <h1 className="mt-1 text-4xl font-bold">
               {player.first_name} {player.last_name}
             </h1>
           </div>

@@ -49,7 +49,7 @@ export default async function OverviewPage() {
         <p className="text-sm text-ink-2">
           {ctx.season} season · {ctx.inSeason ? `Week ${ctx.upcomingWeek}` : "Offseason"}
         </p>
-        <h1 className="text-xl font-semibold tracking-tight">Overview</h1>
+        <h1 className="text-3xl font-bold">Overview</h1>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -61,7 +61,7 @@ export default async function OverviewPage() {
               {waivers.map((w) => (
                 <li key={w.playerId} className="flex items-center gap-2 py-1 text-sm">
                   <PosBadge position={w.position} />
-                  <PlayerLink id={w.player_id} name={w.name} />
+                  <PlayerLink id={w.player_id} name={w.name} team={w.team} />
                   <span className="text-xs text-muted">{w.team ?? "FA"}</span>
                   <InjuryTag status={w.injury_status} />
                   <span className="tabular ml-auto text-xs text-ink-2">+{w.count.toLocaleString()}</span>
@@ -80,7 +80,7 @@ export default async function OverviewPage() {
               {hot.map((r) => (
                 <li key={r.player_id} className="flex items-center gap-2 py-1 text-sm">
                   <PosBadge position={r.position} />
-                  <PlayerLink id={r.player_id} name={r.name} />
+                  <PlayerLink id={r.player_id} name={r.name} team={r.team} />
                   <span className="text-xs text-muted">{r.team ?? "FA"}</span>
                   <span className="ml-auto">
                     <Sparkline values={r.recent} width={72} height={20} />
@@ -103,7 +103,7 @@ export default async function OverviewPage() {
                 <li key={l.player_id} className="flex items-center gap-2 py-1 text-sm">
                   <span className="tabular w-4 text-xs text-muted">{i + 1}</span>
                   <PosBadge position={l.position} />
-                  <PlayerLink id={l.player_id} name={l.name} />
+                  <PlayerLink id={l.player_id} name={l.name} team={l.team} />
                   <span className="text-xs text-muted">vs {l.opponent}</span>
                   <span className="tabular ml-auto font-medium">{l.points.toFixed(1)}</span>
                 </li>

@@ -26,6 +26,8 @@ The Front Office is a home base for a fantasy football league: standings, matchu
 
 Every page supports **PPR, Half PPR, and Standard** scoring via the toggle in the header.
 
+The look borrows from sports broadcast graphics: a dark "stadium lights" theme by default (with a light mode toggle), condensed scoreboard type (Barlow Condensed), a volt accent, and slanted chyron edges. Player photos sit on their NFL team's colors (`lib/nfl-colors.ts`), and each league manager gets a signature color (`lib/manager-color.ts`) used in standings and power rankings. The league paper keeps its own print look.
+
 ---
 
 ## Architecture

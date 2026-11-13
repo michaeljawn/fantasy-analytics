@@ -32,7 +32,7 @@ const SLOT_ELIGIBILITY: Record<string, Position[]> = {
 const RESULTS_FULL_WEIGHT_GAMES = 8;
 const RESULTS_MAX_WEIGHT = 0.5;
 
-export type PowerPlayer = { playerId: string; name: string; position: Position; ppg: number; value: number };
+export type PowerPlayer = { playerId: string; name: string; position: Position; team: string | null; ppg: number; value: number };
 
 export type PowerTeam = {
   team: Team;
@@ -92,7 +92,7 @@ export async function getPowerRankings(league: LeagueInfo): Promise<PowerRanking
   const players = new Map<string, PowerPlayer>();
   for (const v of valued.players) {
     const ppg = v.outlook ? v.outlook.outlook * v.outlook.availability : 0;
-    players.set(v.playerId, { playerId: v.playerId, name: v.name, position: v.position, ppg, value: v.value });
+    players.set(v.playerId, { playerId: v.playerId, name: v.name, position: v.position, team: v.team, ppg, value: v.value });
   }
 
   const starterSlots = league.roster_positions.filter((s) => SLOT_ELIGIBILITY[s]);

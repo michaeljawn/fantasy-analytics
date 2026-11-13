@@ -1,63 +1,60 @@
 @import "tailwindcss";
 
+/* ──────────────────────────────────────────────
+   Theme: "stadium lights" (dark, the default) and a light mode.
+   Broadcast-style: deep navy, one volt accent, condensed display type.
+   ────────────────────────────────────────────── */
+
 :root {
-  color-scheme: light;
-  --page: #f9f9f7;
-  --surface: #fcfcfb;
-  --surface-2: #f0efec;
-  --ink: #0b0b0b;
-  --ink-2: #52514e;
-  --muted: #898781;
-  --grid: #e1e0d9;
-  --axis: #c3c2b7;
-  --border: rgba(11, 11, 11, 0.1);
-  --series-1: #2a78d6;
-  --series-2: #eb6834;
-  --series-1-wash: rgba(42, 120, 214, 0.1);
-  --series-1-proj: rgba(42, 120, 214, 0.28);
-  --good: #006300;
-  --good-mark: #0ca30c;
-  --warning: #fab219;
-  --serious: #ec835a;
-  --critical: #d03b3b;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --page: #0d0d0d;
-    --surface: #1a1a19;
-    --surface-2: #232321;
-    --ink: #f0efec;
-    --ink-2: #c3c2b7;
-    --muted: #898781;
-    --grid: #2c2c2a;
-    --axis: #383835;
-    --border: rgba(255, 255, 255, 0.1);
-    --series-1: #3987e5;
-    --series-2: #d95926;
-    --series-1-wash: rgba(57, 135, 229, 0.12);
-    --series-1-proj: rgba(57, 135, 229, 0.35);
-    --good: #0ca30c;
-  }
-}
-
-:root[data-theme="dark"] {
   color-scheme: dark;
-  --page: #0d0d0d;
-  --surface: #1a1a19;
-  --surface-2: #232321;
-  --ink: #f0efec;
-  --ink-2: #c3c2b7;
-  --muted: #898781;
-  --grid: #2c2c2a;
-  --axis: #383835;
-  --border: rgba(255, 255, 255, 0.1);
-  --series-1: #3987e5;
-  --series-2: #d95926;
-  --series-1-wash: rgba(57, 135, 229, 0.12);
-  --series-1-proj: rgba(57, 135, 229, 0.35);
-  --good: #0ca30c;
+  --page: #070b14;
+  --surface: #0d1422;
+  --surface-2: #162035;
+  --ink: #eef2f8;
+  --ink-2: #a9b4c8;
+  --muted: #6f7b91;
+  --grid: #1b2540;
+  --axis: #2c3854;
+  --border: rgba(160, 185, 230, 0.13);
+  --accent: #c6f432;
+  --on-accent: #0a0f1a;
+  --accent-glow: rgba(198, 244, 50, 0.35);
+  --series-1: #4c9bff;
+  --series-2: #ff7a3d;
+  --series-1-wash: rgba(76, 155, 255, 0.12);
+  --series-1-proj: rgba(76, 155, 255, 0.35);
+  --good: #2ee59d;
+  --good-mark: #2ee59d;
+  --warning: #ffc53d;
+  --serious: #ff8a4c;
+  --critical: #ff5a5f;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --page: #f4f6f9;
+  --surface: #ffffff;
+  --surface-2: #e9edf3;
+  --ink: #0a1120;
+  --ink-2: #455068;
+  --muted: #7a8499;
+  --grid: #e2e6ee;
+  --axis: #c4cad6;
+  --border: rgba(10, 17, 32, 0.11);
+  --accent: #4a7a00;
+  --on-accent: #ffffff;
+  --accent-glow: rgba(74, 122, 0, 0.25);
+  --series-1: #2a6fdb;
+  --series-2: #e8602a;
+  --series-1-wash: rgba(42, 111, 219, 0.1);
+  --series-1-proj: rgba(42, 111, 219, 0.28);
+  --good: #0a7d4f;
+  --good-mark: #14a86a;
+  --warning: #d99000;
+  --serious: #e0672f;
+  --critical: #d03b3b;
+  --shadow: rgba(10, 17, 32, 0.12);
 }
 
 @theme inline {
@@ -69,11 +66,14 @@
   --color-muted: var(--muted);
   --color-grid: var(--grid);
   --color-line: var(--border);
-  --color-accent: var(--series-1);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
   --color-accent-2: var(--series-2);
+  --color-series-1: var(--series-1);
   --color-good: var(--good);
   --color-critical: var(--critical);
-  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: var(--font-body), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-condensed), "Arial Narrow", system-ui, sans-serif;
 }
 
 body {
@@ -81,8 +81,64 @@ body {
   color: var(--ink);
 }
 
+/* Stadium light wash at the top of every page (dark mode only) */
+:root:not([data-theme="light"]) body {
+  background:
+    radial-gradient(ellipse 80% 420px at 50% -120px, rgba(76, 155, 255, 0.13), transparent 70%),
+    var(--page);
+  background-attachment: fixed;
+}
+
+/* Page titles read like a broadcast graphic */
+@layer base {
+  h1:not(.paper *) {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    line-height: 1.05;
+  }
+}
+
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/* Scoreboard numbers */
+.score {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+/* Broadcast chyron edges: a parallelogram, or just one slanted side */
+.slant {
+  clip-path: polygon(0.45em 0, 100% 0, calc(100% - 0.45em) 100%, 0 100%);
+}
+.slant-r {
+  clip-path: polygon(0 0, 100% 0, calc(100% - 0.6em) 100%, 0 100%);
+}
+
+/* Section label: condensed caps with a volt tick, used for card titles */
+.chyron {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+.chyron::before {
+  content: "";
+  flex: none;
+  width: 0.4rem;
+  height: 0.85rem;
+  background: var(--accent);
+  transform: skewX(-18deg);
 }
 
 /* ──────────────────────────────────────────────
@@ -119,7 +175,7 @@ body {
   left: -10%;
 }
 .hero-glow::after {
-  background: var(--series-2);
+  background: var(--accent);
   top: 10%;
   right: -15%;
   opacity: 0.14;
@@ -246,12 +302,12 @@ body {
 }
 .lift:hover {
   transform: translateY(-4px);
-  border-color: color-mix(in oklab, var(--series-1) 55%, transparent);
-  box-shadow: 0 12px 32px -16px color-mix(in oklab, var(--series-1) 60%, transparent);
+  border-color: color-mix(in oklab, var(--accent) 55%, transparent);
+  box-shadow: 0 12px 32px -16px color-mix(in oklab, var(--accent) 60%, transparent);
 }
 
 .text-gradient {
-  background: linear-gradient(100deg, var(--series-1), color-mix(in oklab, var(--series-1) 40%, var(--series-2)) 55%, var(--series-2));
+  background: linear-gradient(100deg, var(--accent), var(--good) 50%, var(--series-1));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

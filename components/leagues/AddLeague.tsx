@@ -13,7 +13,7 @@ function Submit({ children, pending: pendingLabel }: { children: React.ReactNode
     <button
       type="submit"
       disabled={pending}
-      className="shrink-0 rounded-md bg-accent px-3 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
+      className="shrink-0 rounded-md bg-accent px-3 py-2 text-sm font-semibold text-on-accent transition hover:brightness-110 disabled:opacity-60"
     >
       {pending ? pendingLabel : children}
     </button>

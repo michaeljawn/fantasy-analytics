@@ -40,7 +40,7 @@ export function LeagueHeader({
             <p className="text-sm text-ink-2">
               {league.season} season · {weekStatus(league)}
             </p>
-            <h1 className="truncate text-xl font-semibold tracking-tight">{league.name}</h1>
+            <h1 className="truncate text-3xl font-bold">{league.name}</h1>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">

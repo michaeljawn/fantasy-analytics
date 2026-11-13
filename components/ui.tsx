@@ -19,8 +19,8 @@ export function Card({
       {(title || action) && (
         <header className="flex items-start justify-between gap-3 px-4 pt-4">
           <div>
-            {title && <h2 className="text-sm font-semibold">{title}</h2>}
-            {subtitle && <p className="mt-0.5 text-xs text-muted">{subtitle}</p>}
+            {title && <h2 className="chyron">{title}</h2>}
+            {subtitle && <p className="mt-1 text-xs text-muted">{subtitle}</p>}
           </div>
           {action}
         </header>
@@ -34,7 +34,7 @@ export function PageHeader({ title, description, children }: { title: string; de
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
+        <h1 className="text-3xl font-bold">{title}</h1>
         {description && <p className="mt-1 max-w-2xl text-sm text-ink-2">{description}</p>}
       </div>
       {children}
@@ -73,18 +73,18 @@ export function InjuryTag({ status }: { status: string | null }) {
 // Kickers and defenses have no stats yet (#17), so no profile page to link to
 export const hasProfile = (position: string | null | undefined) => position !== "K" && position !== "DEF";
 
-export function PlayerLink({ id, name, position }: { id: string; name: string; position?: string | null }) {
+export function PlayerLink({ id, name, position, team }: { id: string; name: string; position?: string | null; team?: string | null }) {
   if (!hasProfile(position)) {
     return (
       <span className="inline-flex min-w-0 items-center gap-2 font-medium">
-        <PlayerAvatar id={id} name={name} />
+        <PlayerAvatar id={id} name={name} team={team} />
         <span className="truncate">{name}</span>
       </span>
     );
   }
   return (
     <Link href={`/players/${id}`} className="group inline-flex min-w-0 items-center gap-2 font-medium">
-      <PlayerAvatar id={id} name={name} />
+      <PlayerAvatar id={id} name={name} team={team} />
       <span className="truncate group-hover:text-accent group-hover:underline">{name}</span>
     </Link>
   );
@@ -120,7 +120,7 @@ export function Segmented({ items }: { items: { href: string; label: string; act
         <Link
           key={i.label}
           href={i.href}
-          className={`rounded px-2.5 py-1 ${i.active ? "bg-surface-2 font-medium text-ink" : "text-ink-2 hover:text-ink"}`}
+          className={`px-2.5 py-1 ${i.active ? "slant bg-accent font-semibold text-on-accent" : "rounded text-ink-2 hover:text-ink"}`}
         >
           {i.label}
         </Link>

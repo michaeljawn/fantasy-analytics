@@ -112,7 +112,7 @@ async function RosTable({ season, upcomingWeek, format, pos }: { season: number;
               <td className="py-2">
                 <div className="flex items-center gap-2">
                   <PosBadge position={r.position} />
-                  <PlayerLink id={r.playerId} name={r.name} />
+                  <PlayerLink id={r.playerId} name={r.name} team={r.team} />
                   <span className="text-xs text-muted">{r.team ?? "FA"}</span>
                   <InjuryTag status={r.injuryStatus} />
                   <SignalTag signal={values.get(r.playerId)?.signal} market={values.get(r.playerId)?.market} model={values.get(r.playerId)?.model} />
@@ -210,7 +210,7 @@ async function SeasonTable({
                 <td className="py-2">
                   <div className="flex items-center gap-2">
                     <PosBadge position={r.position} />
-                    <PlayerLink id={r.player_id} name={r.name} />
+                    <PlayerLink id={r.player_id} name={r.name} team={r.team} />
                     <span className="text-xs text-muted">{r.team ?? "FA"}</span>
                   </div>
                 </td>
